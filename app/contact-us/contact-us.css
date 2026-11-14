@@ -662,7 +662,7 @@
 }
 
 .contact-page .topline {
-  background: #1e73e8;
+  background: #e2231a;
 }
 
 .contact-page .site-header {
@@ -671,18 +671,18 @@
 
 .contact-page .main-nav a:hover,
 .contact-page .header-link:hover {
-  color: #1e73e8;
+  color: #e2231a;
 }
 
 .contact-page .header-link,
 .contact-page .directions-button {
   border-radius: 6px;
-  background: #1e73e8;
+  background: #e2231a;
 }
 
 .contact-page .header-link:hover,
 .contact-page .directions-button:hover {
-  background: #155fc4;
+  background: #b51c16;
   color: #fff;
 }
 
@@ -715,17 +715,17 @@
 
 .contact-symbol,
 .contact-page .address-icon {
-  border-color: #c9ddf6;
-  color: #1e73e8;
+  border-color: #f0c4c1;
+  color: #e2231a;
 }
 
 .contact-page .card-arrow {
   border-color: #e1e6ed;
-  color: #1e73e8;
+  color: #e2231a;
 }
 
 .contact-page .card-arrow:hover {
-  background: #1e73e8;
+  background: #e2231a;
   color: #fff;
 }
 
@@ -751,7 +751,7 @@
 }
 
 .contact-page .map-pin {
-  background: #1e73e8;
+  background: #e2231a;
 }
 
 .contact-page .site-footer {

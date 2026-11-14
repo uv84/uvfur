@@ -37,7 +37,7 @@ function formatPrice(value: string | null) {
 
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
   }).format(Number(value));
 }
 
@@ -437,7 +437,7 @@ export function AdminDashboard({
                       defaultValue={editingProduct?.name ?? ""}
                       maxLength={160}
                       name="name"
-                      placeholder="e.g. Classic Shaker Cabinet Door"
+                      placeholder="e.g. Bosch Series 6 Washing Machine"
                       required
                     />
                   </label>
@@ -479,23 +479,23 @@ export function AdminDashboard({
 
                   <div className="admin-field-grid">
                     <label>
-                      Amazon price (USD)
+                      Retail price (INR)
                       <input
                         defaultValue={editingProduct?.amazon_price ?? ""}
                         min="0"
                         name="amazonPrice"
-                        placeholder="e.g. 89.00"
+                        placeholder="e.g. 74990"
                         step="0.01"
                         type="number"
                       />
                     </label>
                     <label>
-                      Bosch price (USD)
+                      Our price (INR)
                       <input
                         defaultValue={editingProduct?.bosch_price ?? ""}
                         min="0"
                         name="boschPrice"
-                        placeholder="e.g. 64.50"
+                        placeholder="e.g. 67990"
                         step="0.01"
                         type="number"
                       />

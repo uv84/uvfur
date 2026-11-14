@@ -135,3 +135,45 @@ export async function getCatalogData() {
 
   return { categories, products };
 }
+
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  await connection();
+  const sql = getDatabase();
+  const rows = await runCatalogQuery(() => sql`
+    SELECT
+      products.id::text,
+      products.category_id::text,
+      categories.name AS category_name,
+      categories.parent_id::text AS category_parent_id,
+      products.name,
+      products.slug,
+      products.description,
+      products.amazon_price::text,
+      products.bosch_price::text,
+      products.image_url
+    FROM products
+    JOIN categories ON categories.id = products.category_id
+    WHERE products.slug = ${slug}
+      AND products.is_active = true
+    LIMIT 1
+  `);
+  const row = rows[0];
+
+  if (!row) {
+    return null;
+  }
+
+  return {
+    id: String(row.id),
+    category_id: String(row.category_id),
+    category_name: String(row.category_name),
+    category_parent_id:
+      row.category_parent_id === null ? null : String(row.category_parent_id),
+    name: String(row.name),
+    slug: String(row.slug),
+    description: String(row.description),
+    amazon_price: row.amazon_price === null ? null : String(row.amazon_price),
+    bosch_price: row.bosch_price === null ? null : String(row.bosch_price),
+    image_url: String(row.image_url),
+  };
+}

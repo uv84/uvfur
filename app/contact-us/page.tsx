@@ -3,7 +3,7 @@ import Link from "next/link";
 import "./contact-us.css";
 
 export const metadata: Metadata = {
-  title: "Contact Us | Decore-ative Specialties",
+  title: "Contact Us | Appliance Studio",
   description:
     "Get in touch by phone, fax, or email, and find location details and directions.",
 };
@@ -50,16 +50,16 @@ export default function ContactPage() {
   return (
     <main className="contact-page">
       <div className="topline">
-        <span>Decore-ative Specialties</span>
-        <span>Here to help with your next project</span>
+        <span>Appliance Studio</span>
+        <span>Here to help you find the right appliance</span>
       </div>
 
       <header className="site-header">
-        <Link className="brand" href="/" aria-label="Decore-ative Specialties home">
-          <span className="brand-mark" aria-hidden="true">D</span>
+        <Link className="brand" href="/" aria-label="Appliance Studio home">
+          <span className="brand-mark" aria-hidden="true">A</span>
           <span className="brand-name">
-            <strong>DECORE-ATIVE</strong>
-            <small>SPECIALTIES</small>
+            <strong>APPLIANCE</strong>
+            <small>STUDIO</small>
           </span>
         </Link>
 
@@ -158,7 +158,7 @@ export default function ContactPage() {
           <div className="map-label">
             <span className="map-pin" aria-hidden="true">⌖</span>
             <div>
-              <strong>Decore-ative Specialties</strong>
+              <strong>Appliance Studio</strong>
               <span>{address}</span>
             </div>
           </div>
@@ -166,14 +166,14 @@ export default function ContactPage() {
       </section>
 
       <footer className="site-footer">
-        <Link className="brand footer-brand" href="/" aria-label="Decore-ative Specialties home">
-          <span className="brand-mark" aria-hidden="true">D</span>
+        <Link className="brand footer-brand" href="/" aria-label="Appliance Studio home">
+          <span className="brand-mark" aria-hidden="true">A</span>
           <span className="brand-name">
-            <strong>DECORE-ATIVE</strong>
-            <small>SPECIALTIES</small>
+            <strong>APPLIANCE</strong>
+            <small>STUDIO</small>
           </span>
         </Link>
-        <p>Custom components. Considered relationships.</p>
+        <p>Better appliances. Personal service.</p>
         <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
       </footer>
     </main>

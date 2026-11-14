@@ -252,8 +252,8 @@ export async function saveProduct(
   const description = formText(formData, "description");
   const image = parseImageUrl(formData);
   const categoryId = formText(formData, "categoryId");
-  const amazonPrice = optionalPrice(formText(formData, "amazonPrice"), "Amazon price");
-  const boschPrice = optionalPrice(formText(formData, "boschPrice"), "Bosch price");
+  const amazonPrice = optionalPrice(formText(formData, "amazonPrice"), "Retail price");
+  const boschPrice = optionalPrice(formText(formData, "boschPrice"), "Our price");
 
   if ("error" in image) {
     return { error: image.error };

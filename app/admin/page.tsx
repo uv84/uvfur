@@ -7,7 +7,7 @@ import { AdminDashboard, AdminLoginForm } from "./AdminForms";
 import "./admin.css";
 
 export const metadata = {
-  title: "Catalog Admin | Decore-ative Specialties",
+  title: "Catalog Admin | Appliance Studio",
   robots: { index: false, follow: false },
 };
 
@@ -15,9 +15,9 @@ export default function AdminPage() {
   return (
     <main className="admin-page">
       <header className="admin-header">
-        <Link className="brand" href="/" aria-label="Decore-ative Specialties home">
-          <span className="brand-mark" aria-hidden="true">D</span>
-          <span className="brand-name"><strong>DECORE-ATIVE</strong><small>SPECIALTIES</small></span>
+        <Link className="brand" href="/" aria-label="Appliance Studio home">
+          <span className="brand-mark" aria-hidden="true">A</span>
+          <span className="brand-name"><strong>APPLIANCE</strong><small>STUDIO</small></span>
         </Link>
         <Link href="/products">View catalog <span aria-hidden="true">↗</span></Link>
       </header>

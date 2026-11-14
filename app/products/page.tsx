@@ -2,34 +2,36 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getCatalogData } from "@/lib/catalog";
+import { CatalogBrowser } from "./CatalogBrowser";
+import { ProductsHeader } from "./ProductsHeader";
 import "./products.css";
 
 export const metadata: Metadata = {
-  title: "Products | Decore-ative Specialties",
+  title: "Home Appliances | Appliance Studio",
   description:
-    "Explore custom cabinet doors, drawer boxes, components, molding, hardware, and finishing details for your next project.",
+    "Explore Bosch washing machines, ovens, dishwashers, and refrigerators. Ask our team for your best price.",
 };
 
 const exploreTopics = [
   {
-    id: "materials",
-    title: "Materials",
-    text: "Discover a range of materials to suit the style and needs of your project.",
+    id: "delivery",
+    title: "Delivery",
+    text: "Ask about delivery options and availability for your area.",
   },
   {
-    id: "finishes",
-    title: "Finishes",
-    text: "Bring your design to life with colors, textures, and finishing options.",
+    id: "installation",
+    title: "Installation",
+    text: "Get help choosing installation support for your new appliance.",
   },
   {
-    id: "design-styles",
-    title: "Design styles",
-    text: "Find inspiration for a look that feels at home in your space.",
+    id: "warranty",
+    title: "Warranty",
+    text: "Talk with our team about product warranty and care.",
   },
   {
-    id: "decore-brands",
-    title: "Decore brands",
-    text: "Get to know the collections and capabilities behind our products.",
+    id: "support",
+    title: "After-sales support",
+    text: "We are here to help with product questions after your purchase.",
   },
 ];
 
@@ -43,45 +45,15 @@ export default function ProductsPage() {
 
 async function ProductsContent() {
   const { categories, products } = await getCatalogData();
-  const rootCategories = categories.filter((category) => !category.parent_id);
 
   return (
     <main className="products-page">
       <div className="announcement">
-        <span>Built around your business.</span>
+        <span>Better appliances. Better prices.</span>
         <Link href="/contact-us">Talk with our team <span aria-hidden="true">↗</span></Link>
       </div>
 
-      <header className="site-header">
-        <Link className="brand" href="/" aria-label="Decore-ative Specialties home">
-          <span className="brand-mark" aria-hidden="true">D</span>
-          <span className="brand-name">
-            <strong>DECORE-ATIVE</strong>
-            <small>SPECIALTIES</small>
-          </span>
-        </Link>
-
-        <nav className="main-nav" aria-label="Main navigation">
-          <Link className="active" href="/products">Products</Link>
-          <Link href="/#difference">Why Decore</Link>
-          <Link href="/#inspiration">Inspiration</Link>
-          <Link href="/contact-us">Contact</Link>
-        </nav>
-
-        <div className="header-actions">
-          <Link className="login-link" href="/contact-us">Log in</Link>
-          <Link className="header-cta" href="/contact-us">Let&apos;s talk <span aria-hidden="true">↗</span></Link>
-          <details className="mobile-menu">
-            <summary aria-label="Open navigation menu"><span></span><span></span></summary>
-            <nav aria-label="Mobile navigation">
-              <Link href="/products">Products</Link>
-              <Link href="/#difference">Why Decore</Link>
-              <Link href="/#inspiration">Inspiration</Link>
-              <Link href="/contact-us">Contact</Link>
-            </nav>
-          </details>
-        </div>
-      </header>
+      <ProductsHeader />
 
       <div className="products-breadcrumb">
         <Link href="/">Home</Link>
@@ -90,157 +62,27 @@ async function ProductsContent() {
       </div>
 
       <section className="catalog-intro">
-        <p className="eyebrow">Made for your next project</p>
-        <h1>Products for<br /><em>every possibility.</em></h1>
+        <p className="eyebrow">Thoughtful technology. Everyday comfort.</p>
+        <h1>Find your next<br /><em>home essential.</em></h1>
         <p>
-          From the details you notice to the pieces that make it all work,
-          explore cabinetry products made to support your vision.
+          Explore Bosch appliances for cooking, cleaning, and caring for your
+          home. Ask us for a better price on the products you love.
         </p>
       </section>
 
       <div className="catalog-layout">
-        <aside className="catalog-sidebar">
-          <div className="catalog-side-group">
-            <h2>Categories</h2>
-            <nav aria-label="Product categories">
-              {rootCategories.map((category) => (
-                <a href={`#${category.id}`} key={category.id}>
-                  <span>{category.name}</span>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              ))}
-              {categories.filter((category) => category.parent_id).map((category) => (
-                <a href={`#${category.id}`} key={category.id}>
-                  <span>— {category.name}</span>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              ))}
-            </nav>
-          </div>
-          <div className="catalog-side-group explore-group">
-            <h2>Explore</h2>
-            <nav aria-label="Product information">
-              {exploreTopics.map((topic) => (
-                <a href={`#${topic.id}`} key={topic.id}>
-                  <span>{topic.title}</span>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              ))}
-            </nav>
-          </div>
-          <div className="sidebar-note">
-            <span className="sidebar-note-mark" aria-hidden="true">D</span>
-            <p>Have a project in mind?</p>
-            <Link href="/contact-us">Let&apos;s talk <span aria-hidden="true">↗</span></Link>
-          </div>
-        </aside>
-
-        <section className="catalog-main" aria-labelledby="catalog-heading">
-          <div className="catalog-heading">
-            <div>
-              <p className="eyebrow">Find your starting point</p>
-              <h2 id="catalog-heading">Explore our <em>products</em></h2>
-            </div>
-            <span>{rootCategories.length} product categories</span>
-          </div>
-
-          <div className="catalog-grid">
-            {rootCategories.map((category, index) => {
-              const subcategories = categories.filter(
-                (subcategory) => subcategory.parent_id === category.id,
-              );
-              const categoryIds = new Set([
-                category.id,
-                ...subcategories.map((subcategory) => subcategory.id),
-              ]);
-              const categoryProducts = products.filter((product) =>
-                categoryIds.has(product.category_id),
-              );
-
-              return (
-              <article className="catalog-card" id={category.id} key={category.id}>
-                <div
-                  className="catalog-card-image"
-                  role="img"
-                  aria-label={category.name}
-                  style={{ backgroundImage: `url("${category.image_url}")` }}
-                >
-                  <span className="catalog-card-number">{String(index + 1).padStart(2, "0")}</span>
-                  <span className="catalog-card-image-mark" aria-hidden="true">D</span>
-                </div>
-                <div className="catalog-card-copy">
-                  <h3>{category.name}</h3>
-                  <p>{category.description}</p>
-                  <Link href="/contact-us">
-                    Ask us about this <span aria-hidden="true">↗</span>
-                  </Link>
-                  {subcategories.length > 0 && (
-                    <div className="catalog-subcategories">
-                      {subcategories.map((subcategory) => (
-                        <a id={subcategory.id} href={`#${subcategory.id}`} key={subcategory.id}>
-                          {subcategory.name}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                  {categoryProducts.length > 0 && (
-                    <div className="catalog-products">
-                      {categoryProducts.map((product) => (
-                        <article className="catalog-product" key={product.id}>
-                          <div
-                            className="catalog-product-image"
-                            role="img"
-                            aria-label={product.name}
-                            style={{ backgroundImage: `url("${product.image_url}")` }}
-                          />
-                          <div>
-                            <h4>{product.name}</h4>
-                            <p>{product.description}</p>
-                            <div className="catalog-product-prices">
-                              {product.amazon_price !== null && (
-                                <span>
-                                  Amazon{" "}
-                                  <strong>
-                                    {new Intl.NumberFormat("en-US", {
-                                      style: "currency",
-                                      currency: "USD",
-                                    }).format(Number(product.amazon_price))}
-                                  </strong>
-                                </span>
-                              )}
-                              {product.bosch_price !== null && (
-                                <span>
-                                  Bosch{" "}
-                                  <strong>
-                                    {new Intl.NumberFormat("en-US", {
-                                      style: "currency",
-                                      currency: "USD",
-                                    }).format(Number(product.bosch_price))}
-                                  </strong>
-                                </span>
-                              )}
-                            </div>
-                            <Link className="catalog-ask-price" href="/contact-us">
-                              Ask me for a better price <span aria-hidden="true">↗</span>
-                            </Link>
-                          </div>
-                        </article>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </article>
-              );
-            })}
-          </div>
-        </section>
+        <CatalogBrowser
+          categories={categories}
+          products={products}
+          exploreTopics={exploreTopics}
+        />
       </div>
 
       <section className="explore-section" aria-labelledby="explore-heading">
         <div className="explore-heading">
           <p className="eyebrow">Make it your own</p>
-          <h2 id="explore-heading">Details shape the <em>whole story.</em></h2>
-          <p>Get to know the materials, finishes, and design ideas that make your project yours.</p>
+          <h2 id="explore-heading">Thoughtful care at <em>every step.</em></h2>
+          <p>From delivery to after-sales support, our team is here to make your experience easy.</p>
         </div>
         <div className="explore-grid">
           {exploreTopics.map((topic, index) => (
@@ -257,7 +99,7 @@ async function ProductsContent() {
       <section className="products-cta">
         <div>
           <p className="eyebrow">A helpful team is just a conversation away</p>
-          <h2>Let&apos;s make room<br /><em>for what&apos;s next.</em></h2>
+          <h2>Make yourself<br /><em>at home.</em></h2>
         </div>
         <Link className="button button-light" href="/contact-us">
           Get in touch <span aria-hidden="true">↗</span>
@@ -265,12 +107,12 @@ async function ProductsContent() {
       </section>
 
       <footer className="site-footer">
-        <Link className="brand footer-brand" href="/" aria-label="Decore-ative Specialties home">
-          <span className="brand-mark" aria-hidden="true">D</span>
-          <span className="brand-name"><strong>DECORE-ATIVE</strong><small>SPECIALTIES</small></span>
+        <Link className="brand footer-brand" href="/" aria-label="Appliance Studio home">
+          <span className="brand-mark" aria-hidden="true">A</span>
+          <span className="brand-name"><strong>APPLIANCE</strong><small>STUDIO</small></span>
         </Link>
-        <p>Custom components. Considered relationships.</p>
-        <span>© Decore-ative Specialties</span>
+        <p>Better appliances. Personal service.</p>
+        <span>Independent retailer; not affiliated with Bosch.</span>
       </footer>
     </main>
   );
