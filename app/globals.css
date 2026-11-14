@@ -3,9 +3,12 @@
 :root {
   --ink: #2b3545;
   --muted: #6f7a8a;
-  --paper: #f3f5f8;
-  --wood: #e2231a;
-  --line: #e1e6ed;
+  --paper: #f1f3f6;
+  --accent: #1976e8;
+  --accent-hover: #155fc0;
+  --wood: var(--accent);
+  --line: #e3e7ed;
+  --panel: #fff;
 }
 
 * {
@@ -167,7 +170,7 @@ a {
   display: flex;
   align-items: center;
   color: white;
-  background: #554330;
+  background: #344256;
 }
 
 .hero-photo,
@@ -215,7 +218,7 @@ a {
 .hero-eyebrow span {
   width: 26px;
   height: 1px;
-  background: #c59a6c;
+  background: #8abaff;
 }
 
 h1,
@@ -240,7 +243,7 @@ h2 em {
 }
 
 .hero h1 em {
-  color: #e3c9b4;
+  color: #d7e8ff;
 }
 
 .hero-copy {
@@ -264,7 +267,7 @@ h2 em {
 }
 
 .button-red:hover {
-  background: #694324;
+  background: #155fc0;
   transform: translateY(-2px);
 }
 
@@ -304,7 +307,7 @@ h2 em {
 
 .hero-caption b {
   padding: 0 7px;
-  color: #d5b080;
+  color: #8abaff;
 }
 
 .hero-index {
@@ -376,13 +379,13 @@ h2 em {
   align-items: flex-start;
   gap: 22px;
   border: 1px solid var(--line);
-  background: #fffdf2;
+  background: #ffffff;
   transition: border-color .2s ease, transform .2s ease;
 }
 
 .benefit:hover {
   transform: translateY(-4px);
-  border-color: #c8b58f;
+  border-color: #c4dcfa;
 }
 
 .benefit-icon {
@@ -390,7 +393,7 @@ h2 em {
   height: 48px;
   display: grid;
   place-items: center;
-  border: 1px solid #ddc9aa;
+  border: 1px solid #dce2e9;
   border-radius: 50%;
   color: var(--wood);
   font-size: 20px;
@@ -413,7 +416,7 @@ h2 em {
 
 .products-section {
   padding: 100px 8.3% 112px;
-  background: #f2ebd5;
+  background: #f1f3f6;
 }
 
 .section-heading {
@@ -446,7 +449,7 @@ h2 em {
   height: clamp(210px, 28vw, 355px);
   position: relative;
   overflow: hidden;
-  background-color: #b7a58a;
+  background-color: #e8ebef;
   background-position: center;
   background-size: cover;
 }
@@ -571,7 +574,7 @@ h2 em {
   align-items: center;
   justify-content: space-between;
   gap: 30px;
-  background: #76502f;
+  background: #1976e8;
   color: white;
 }
 
@@ -611,14 +614,14 @@ h2 em {
 }
 
 .footer-brand .brand-mark {
-  border-color: #c59a6c;
-  color: #c59a6c;
+  border-color: #8abaff;
+  color: #8abaff;
 }
 
 .site-footer > p,
 .site-footer > span {
   margin: 0;
-  color: #c0b49f;
+  color: #c0c9d5;
   font-size: 10px;
 }
 
@@ -925,7 +928,7 @@ h2 em {
 }
 
 .announcement {
-  background: #e2231a;
+  background: #1976e8;
 }
 
 .site-header {
@@ -933,20 +936,20 @@ h2 em {
 }
 
 .brand-mark {
-  border-color: #e2231a;
-  color: #e2231a;
+  border-color: #1976e8;
+  color: #1976e8;
 }
 
 .header-cta,
 .button-dark,
 .contact-banner {
-  background: #e2231a;
+  background: #1976e8;
 }
 
 .header-cta:hover,
 .button-dark:hover,
 .button-red:hover {
-  background: #b51c16;
+  background: #155fc0;
 }
 
 .hero {
@@ -974,16 +977,16 @@ h2 em {
 }
 
 .benefit:hover {
-  border-color: #f0b5b2;
+  border-color: #c4dcfa;
 }
 
 .benefit-icon {
-  border-color: #f0c4c1;
-  color: #e2231a;
+  border-color: #c4dcfa;
+  color: #1976e8;
 }
 
 .products-section {
-  background: #f3f5f8;
+  background: #f1f3f6;
 }
 
 .product-card {

@@ -1,5 +1,5 @@
 .contact-page {
-  --contact-soft: #f1e9d2;
+  --contact-soft: #f1f3f6;
 }
 
 .contact-page .topline {
@@ -65,14 +65,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   overflow: hidden;
-  background: #f2ebd5;
+  background: #f1f3f6;
 }
 
 .contact-page .hero-art {
   min-height: 535px;
   position: relative;
   overflow: hidden;
-  background-color: #b7a58a;
+  background-color: #e8ebef;
   background-image: linear-gradient(0deg, rgba(34, 25, 16, .45), transparent 42%), url("https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=85");
   background-position: center;
   background-size: cover;
@@ -227,7 +227,7 @@
 
 .contact-number {
   padding-top: 6px;
-  color: #9b8a6e;
+  color: #8490a0;
   font-size: 8px;
   letter-spacing: .1em;
 }
@@ -238,7 +238,7 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  border: 1px solid #ddcfb1;
+  border: 1px solid #dce2e9;
   border-radius: 50%;
   color: var(--wood);
   font-size: 17px;
@@ -324,7 +324,7 @@
   align-items: flex-start;
   gap: 15px;
   padding-top: 20px;
-  border-top: 1px solid #e0d6bf;
+  border-top: 1px solid #e1e6ed;
 }
 
 .contact-page .address-icon {
@@ -333,7 +333,7 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  border: 1px solid #ddcfb1;
+  border: 1px solid #dce2e9;
   border-radius: 50%;
   color: var(--wood);
   font-size: 17px;
@@ -346,7 +346,7 @@
 
 .contact-page .address-block address {
   max-width: 250px;
-  color: #635641;
+  color: #586577;
   font-size: 11px;
   font-style: normal;
   line-height: 1.7;
@@ -379,7 +379,7 @@
   min-height: 530px;
   position: relative;
   overflow: hidden;
-  background: #e4dcc7;
+  background: #e8edf3;
 }
 
 .contact-page .map-frame iframe {
@@ -402,7 +402,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  background: rgba(254, 250, 224, .97);
+  background: rgba(255, 255, 255, .97);
   box-shadow: 0 8px 26px rgba(27, 26, 22, .12);
 }
 
@@ -448,14 +448,14 @@
 }
 
 .contact-page .footer-brand .brand-mark {
-  border-color: #c59a6c;
-  color: #c59a6c;
+  border-color: #8abaff;
+  color: #8abaff;
 }
 
 .contact-page .site-footer > p,
 .contact-page .site-footer > a:last-child {
   margin: 0;
-  color: #c0b49f;
+  color: #c0c9d5;
   font-size: 10px;
 }
 
@@ -657,12 +657,12 @@
 }
 
 .contact-page {
-  --contact-soft: #f3f5f8;
-  background: #f3f5f8;
+  --contact-soft: #f1f3f6;
+  background: #f1f3f6;
 }
 
 .contact-page .topline {
-  background: #e2231a;
+  background: #1976e8;
 }
 
 .contact-page .site-header {
@@ -671,18 +671,18 @@
 
 .contact-page .main-nav a:hover,
 .contact-page .header-link:hover {
-  color: #e2231a;
+  color: #1976e8;
 }
 
 .contact-page .header-link,
 .contact-page .directions-button {
   border-radius: 6px;
-  background: #e2231a;
+  background: #1976e8;
 }
 
 .contact-page .header-link:hover,
 .contact-page .directions-button:hover {
-  background: #b51c16;
+  background: #155fc0;
   color: #fff;
 }
 
@@ -691,7 +691,7 @@
 }
 
 .contact-page .contact-section {
-  background: #f3f5f8;
+  background: #f1f3f6;
 }
 
 .contact-page .contact-grid {
@@ -715,22 +715,22 @@
 
 .contact-symbol,
 .contact-page .address-icon {
-  border-color: #f0c4c1;
-  color: #e2231a;
+  border-color: #c4dcfa;
+  color: #1976e8;
 }
 
 .contact-page .card-arrow {
   border-color: #e1e6ed;
-  color: #e2231a;
+  color: #1976e8;
 }
 
 .contact-page .card-arrow:hover {
-  background: #e2231a;
+  background: #1976e8;
   color: #fff;
 }
 
 .contact-page .location-section {
-  background: #f3f5f8;
+  background: #f1f3f6;
 }
 
 .contact-page .address-block {
@@ -751,7 +751,7 @@
 }
 
 .contact-page .map-pin {
-  background: #e2231a;
+  background: #1976e8;
 }
 
 .contact-page .site-footer {
