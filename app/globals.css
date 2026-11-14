@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --ink: #342719;
-  --muted: #756b5a;
-  --paper: #fefae0;
-  --wood: #8b5e34;
-  --line: #e6ddc8;
+  --ink: #2b3545;
+  --muted: #6f7a8a;
+  --paper: #f3f5f8;
+  --wood: #1e73e8;
+  --line: #e1e6ed;
 }
 
 * {
@@ -922,4 +922,105 @@ h2 em {
     scroll-behavior: auto !important;
     transition-duration: .01ms !important;
   }
+}
+
+.announcement {
+  background: #1e73e8;
+}
+
+.site-header {
+  background: #fff;
+}
+
+.brand-mark {
+  border-color: #1e73e8;
+  color: #1e73e8;
+}
+
+.header-cta,
+.button-dark,
+.contact-banner {
+  background: #1e73e8;
+}
+
+.header-cta:hover,
+.button-dark:hover,
+.button-red:hover {
+  background: #155fc4;
+}
+
+.hero {
+  background-color: #344256;
+}
+
+.hero-shade {
+  background: linear-gradient(90deg, rgba(20, 32, 49, .78) 0%, rgba(20, 32, 49, .5) 39%, rgba(20, 32, 49, .08) 80%), linear-gradient(0deg, rgba(20, 32, 49, .4), transparent 25%);
+}
+
+.hero h1 em,
+.contact-banner h2 em {
+  color: #d7e8ff;
+}
+
+.benefits,
+.story-section {
+  background: #fff;
+}
+
+.benefit {
+  border-color: #e3e8ef;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.benefit:hover {
+  border-color: #b7d2f3;
+}
+
+.benefit-icon {
+  border-color: #c9ddf6;
+  color: #1e73e8;
+}
+
+.products-section {
+  background: #f3f5f8;
+}
+
+.product-card {
+  overflow: hidden;
+  border: 1px solid #e3e8ef;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.product-info {
+  padding: 15px 14px;
+  border: 0;
+  background: #fff;
+}
+
+.product-info h3 {
+  color: #2b3545;
+}
+
+.contact-banner {
+  color: #fff;
+}
+
+.site-footer {
+  background: #273244;
+}
+
+.button,
+.header-cta {
+  border-radius: 6px;
+}
+
+.button-light {
+  background: #fff;
+  color: #2b3545;
+}
+
+.button-light:hover {
+  background: #eaf3ff;
 }

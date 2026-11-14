@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getCatalogData } from "@/lib/catalog";
 import "./products.css";
 
 export const metadata: Metadata = {
@@ -7,72 +9,6 @@ export const metadata: Metadata = {
   description:
     "Explore custom cabinet doors, drawer boxes, components, molding, hardware, and finishing details for your next project.",
 };
-
-const categories = [
-  {
-    id: "doors-and-drawer-fronts",
-    name: "Doors & Drawer Fronts",
-    description:
-      "Find a look that feels like yours with custom sizes, profiles, materials, and finishes.",
-    image:
-      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=1000&q=85",
-    number: "01",
-  },
-  {
-    id: "drawer-boxes",
-    name: "Drawer Boxes",
-    description:
-      "Thoughtfully built drawer boxes bring dependable function to the spaces you use every day.",
-    image:
-      "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=1000&q=85",
-    number: "02",
-  },
-  {
-    id: "specialty-items",
-    name: "Specialty Items",
-    description:
-      "Distinctive, made-to-fit details help bring a one-of-a-kind design together.",
-    image:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85",
-    number: "03",
-  },
-  {
-    id: "components",
-    name: "Cabinet Components",
-    description:
-      "Explore the building blocks for cabinetry designed around your project.",
-    image:
-      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1000&q=85",
-    number: "04",
-  },
-  {
-    id: "molding",
-    name: "Molding",
-    description:
-      "Bring a polished finish to your space with details that frame the whole design.",
-    image:
-      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1000&q=85",
-    number: "05",
-  },
-  {
-    id: "accessories",
-    name: "Accessories",
-    description:
-      "Add useful finishing touches that make a room feel considered and complete.",
-    image:
-      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1000&q=85",
-    number: "06",
-  },
-  {
-    id: "hardware",
-    name: "Hardware",
-    description:
-      "Explore the functional details that add the final touch to cabinetry.",
-    image:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85",
-    number: "07",
-  },
-];
 
 const exploreTopics = [
   {
@@ -98,6 +34,17 @@ const exploreTopics = [
 ];
 
 export default function ProductsPage() {
+  return (
+    <Suspense fallback={<main className="products-page"><p className="catalog-loading">Loading catalog...</p></main>}>
+      <ProductsContent />
+    </Suspense>
+  );
+}
+
+async function ProductsContent() {
+  const { categories, products } = await getCatalogData();
+  const rootCategories = categories.filter((category) => !category.parent_id);
+
   return (
     <main className="products-page">
       <div className="announcement">
@@ -156,9 +103,15 @@ export default function ProductsPage() {
           <div className="catalog-side-group">
             <h2>Categories</h2>
             <nav aria-label="Product categories">
-              {categories.map((category) => (
+              {rootCategories.map((category) => (
                 <a href={`#${category.id}`} key={category.id}>
                   <span>{category.name}</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              ))}
+              {categories.filter((category) => category.parent_id).map((category) => (
+                <a href={`#${category.id}`} key={category.id}>
+                  <span>— {category.name}</span>
                   <span aria-hidden="true">↗</span>
                 </a>
               ))}
@@ -188,19 +141,31 @@ export default function ProductsPage() {
               <p className="eyebrow">Find your starting point</p>
               <h2 id="catalog-heading">Explore our <em>products</em></h2>
             </div>
-            <span>{categories.length} product categories</span>
+            <span>{rootCategories.length} product categories</span>
           </div>
 
           <div className="catalog-grid">
-            {categories.map((category) => (
+            {rootCategories.map((category, index) => {
+              const subcategories = categories.filter(
+                (subcategory) => subcategory.parent_id === category.id,
+              );
+              const categoryIds = new Set([
+                category.id,
+                ...subcategories.map((subcategory) => subcategory.id),
+              ]);
+              const categoryProducts = products.filter((product) =>
+                categoryIds.has(product.category_id),
+              );
+
+              return (
               <article className="catalog-card" id={category.id} key={category.id}>
                 <div
                   className="catalog-card-image"
                   role="img"
-                  aria-label={`${category.name} in a warm, modern interior`}
-                  style={{ backgroundImage: `url("${category.image}")` }}
+                  aria-label={category.name}
+                  style={{ backgroundImage: `url("${category.image_url}")` }}
                 >
-                  <span className="catalog-card-number">{category.number}</span>
+                  <span className="catalog-card-number">{String(index + 1).padStart(2, "0")}</span>
                   <span className="catalog-card-image-mark" aria-hidden="true">D</span>
                 </div>
                 <div className="catalog-card-copy">
@@ -209,9 +174,64 @@ export default function ProductsPage() {
                   <Link href="/contact-us">
                     Ask us about this <span aria-hidden="true">↗</span>
                   </Link>
+                  {subcategories.length > 0 && (
+                    <div className="catalog-subcategories">
+                      {subcategories.map((subcategory) => (
+                        <a id={subcategory.id} href={`#${subcategory.id}`} key={subcategory.id}>
+                          {subcategory.name}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                  {categoryProducts.length > 0 && (
+                    <div className="catalog-products">
+                      {categoryProducts.map((product) => (
+                        <article className="catalog-product" key={product.id}>
+                          <div
+                            className="catalog-product-image"
+                            role="img"
+                            aria-label={product.name}
+                            style={{ backgroundImage: `url("${product.image_url}")` }}
+                          />
+                          <div>
+                            <h4>{product.name}</h4>
+                            <p>{product.description}</p>
+                            <div className="catalog-product-prices">
+                              {product.amazon_price !== null && (
+                                <span>
+                                  Amazon{" "}
+                                  <strong>
+                                    {new Intl.NumberFormat("en-US", {
+                                      style: "currency",
+                                      currency: "USD",
+                                    }).format(Number(product.amazon_price))}
+                                  </strong>
+                                </span>
+                              )}
+                              {product.bosch_price !== null && (
+                                <span>
+                                  Bosch{" "}
+                                  <strong>
+                                    {new Intl.NumberFormat("en-US", {
+                                      style: "currency",
+                                      currency: "USD",
+                                    }).format(Number(product.bosch_price))}
+                                  </strong>
+                                </span>
+                              )}
+                            </div>
+                            <Link className="catalog-ask-price" href="/contact-us">
+                              Ask me for a better price <span aria-hidden="true">↗</span>
+                            </Link>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </article>
-            ))}
+              );
+            })}
           </div>
         </section>
       </div>

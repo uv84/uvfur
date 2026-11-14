@@ -1,37 +1,5 @@
-const products = [
-  {
-    name: "Cabinet Doors",
-    slug: "doors-and-drawer-fronts",
-    detail: "Made to fit your vision",
-    image:
-      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=1000&q=85",
-    number: "01",
-  },
-  {
-    name: "Drawer Boxes",
-    slug: "drawer-boxes",
-    detail: "Built for everyday living",
-    image:
-      "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=1000&q=85",
-    number: "02",
-  },
-  {
-    name: "RTA Cabinets",
-    slug: "components",
-    detail: "Smart design, ready to assemble",
-    image:
-      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1000&q=85",
-    number: "03",
-  },
-  {
-    name: "Finishing & More",
-    slug: "finishes",
-    detail: "The details make the difference",
-    image:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85",
-    number: "04",
-  },
-];
+import { Suspense } from "react";
+import { getCatalogData } from "@/lib/catalog";
 
 const benefits = [
   {
@@ -130,38 +98,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="products-section" id="products">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Thoughtfully made, ready for what&apos;s next</p>
-            <h2>Components for<br /><em>every corner.</em></h2>
-          </div>
-          <a className="text-link" href="/products">View all products <span aria-hidden="true">↗</span></a>
-        </div>
-        <div className="product-grid">
-          {products.map((product) => (
-            <a
-              className="product-card"
-              href={`/products#${product.slug}`}
-              key={product.name}
-            >
-              <div
-                className="product-image"
-                role="img"
-                aria-label={`${product.name} in a modern interior`}
-                style={{ backgroundImage: `url("${product.image}")` }}
-              >
-                <span className="product-number">{product.number}</span>
-                <span className="product-arrow" aria-hidden="true">↗</span>
-              </div>
-              <div className="product-info">
-                <div><h3>{product.name}</h3><p>{product.detail}</p></div>
-                <span aria-hidden="true">↗</span>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
+      <Suspense fallback={<section className="products-section" id="products"><p>Loading products...</p></section>}>
+        <HomeCatalogSection />
+      </Suspense>
 
       <section className="story-section" id="inspiration">
         <div className="story-image" role="img" aria-label="Warm, modern kitchen with custom cabinetry"></div>
@@ -194,5 +133,45 @@ export default function Home() {
         <span>© Decore-ative Specialties</span>
       </footer>
     </main>
+  );
+}
+
+async function HomeCatalogSection() {
+  const { categories } = await getCatalogData();
+  const products = categories.filter((category) => !category.parent_id).slice(0, 4);
+
+  return (
+    <section className="products-section" id="products">
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">Thoughtfully made, ready for what&apos;s next</p>
+          <h2>Components for<br /><em>every corner.</em></h2>
+        </div>
+        <a className="text-link" href="/products">View all products <span aria-hidden="true">↗</span></a>
+      </div>
+      <div className="product-grid">
+        {products.map((product, index) => (
+          <a
+            className="product-card"
+            href={`/products#${product.id}`}
+            key={product.name}
+          >
+            <div
+              className="product-image"
+              role="img"
+              aria-label={product.name}
+              style={{ backgroundImage: `url("${product.image_url}")` }}
+            >
+              <span className="product-number">{String(index + 1).padStart(2, "0")}</span>
+              <span className="product-arrow" aria-hidden="true">↗</span>
+            </div>
+            <div className="product-info">
+              <div><h3>{product.name}</h3><p>{product.description}</p></div>
+              <span aria-hidden="true">↗</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
   );
 }
