@@ -977,10 +977,28 @@
   outline-color: #86baf5;
 }
 
+.admin-form .admin-festive-toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.admin-form .admin-festive-toggle input {
+  width: 16px;
+  min-height: 16px;
+  margin: 0;
+  padding: 0;
+  accent-color: #1976e8;
+}
+
 .admin-field-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+}
+
+.admin-price-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .admin-field-grid select:disabled {

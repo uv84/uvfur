@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProductBySlug } from "@/lib/catalog";
-import { PriceRequestButton } from "../PriceRequestButton";
+import { getProductBySlug, getSiteBanner } from "@/lib/catalog";
+import { ProductPricing } from "../ProductPricing";
 import { BrandLogo } from "../../BrandLogo";
 import { ProductsHeader } from "../ProductsHeader";
 import "../products.css";
@@ -36,7 +36,10 @@ async function ProductDetailContent({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const [product, banner] = await Promise.all([
+    getProductBySlug(slug),
+    getSiteBanner(),
+  ]);
 
   if (!product) {
     notFound();
@@ -70,31 +73,12 @@ async function ProductDetailContent({
           <h1>{product.name}</h1>
           <p className="product-detail-description">{product.description}</p>
 
-          <div className="product-detail-prices" aria-label="Product pricing">
-            {product.bosch_price !== null && (
-              <div>
-                <span>Bosch price</span>
-                <strong>{formatPrice(product.bosch_price)}</strong>
-              </div>
-            )}
-            {product.amazon_price !== null && (
-              <div>
-                <span>Amazon price</span>
-                <strong>{formatPrice(product.amazon_price)}</strong>
-              </div>
-            )}
-            {product.amazon_price === null && product.bosch_price === null && (
-              <p>Contact us for current pricing and availability.</p>
-            )}
-          </div>
-
-          <PriceRequestButton
-            productId={product.id}
-            productName={product.name}
+          <ProductPricing
+            festivalName={banner?.festival_name ?? ""}
+            festiveOfferEnabled={banner?.is_festive_offer ?? false}
+            product={product}
           />
-          <p className="product-detail-note">
-            Ask our team about delivery, installation, and product availability.
-          </p>
+
           <Link className="product-detail-back" href="/products">
             <span aria-hidden="true">←</span> Back to all products
           </Link>
@@ -110,11 +94,4 @@ async function ProductDetailContent({
       </footer>
     </main>
   );
-}
-
-function formatPrice(price: string) {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-  }).format(Number(price));
 }

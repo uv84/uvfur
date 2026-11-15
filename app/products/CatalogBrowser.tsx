@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { Category, Product } from "@/lib/catalog";
-import { PriceRequestButton } from "./PriceRequestButton";
 import { CategoryDrawer } from "./CategoryDrawer";
+import { ProductPricing } from "./ProductPricing";
 
 type ExploreTopic = {
   id: string;
@@ -16,10 +16,14 @@ export function CatalogBrowser({
   categories,
   products,
   exploreTopics,
+  festivalName,
+  festiveOfferEnabled,
 }: {
   categories: Category[];
   products: Product[];
   exploreTopics: ExploreTopic[];
+  festivalName: string;
+  festiveOfferEnabled: boolean;
 }) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [expandedCategoryIds, setExpandedCategoryIds] = useState<Set<string>>(
@@ -133,27 +137,11 @@ export function CatalogBrowser({
                   >
                     View product details <span aria-hidden="true">↗</span>
                   </Link>
-                  <div className="catalog-product-prices">
-                    {product.bosch_price !== null && (
-                      <span>
-                        Bosch{" "}
-                        <strong>
-                          {formatPrice(product.bosch_price)}
-                        </strong>
-                      </span>
-                    )}
-                    {product.amazon_price !== null && (
-                      <span>
-                        Amazon{" "}
-                        <strong>
-                          {formatPrice(product.amazon_price)}
-                        </strong>
-                      </span>
-                    )}
-                  </div>
-                  <PriceRequestButton
-                    productId={product.id}
-                    productName={product.name}
+                  <ProductPricing
+                    compact
+                    festivalName={festivalName}
+                    festiveOfferEnabled={festiveOfferEnabled}
+                    product={product}
                   />
                 </div>
               </article>
@@ -192,9 +180,3 @@ function getDescendantCategoryIds(categories: Category[], selectedId: string) {
   return descendants;
 }
 
-function formatPrice(price: string) {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-  }).format(Number(price));
-}

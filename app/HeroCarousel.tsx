@@ -5,17 +5,17 @@ import { useEffect, useState } from "react";
 const slides = [
   {
     image:
-      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2200&q=90",
+      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=2200&q=90",
     position: "center 54%",
   },
   {
     image:
-      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=2200&q=90",
+      "https://images.unsplash.com/photo-1757387240036-d7eb9b096c40?auto=format&fit=crop&w=2200&q=90",
     position: "center 52%",
   },
   {
     image:
-      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2200&q=90",
+      "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&w=2200&q=90",
     position: "center 56%",
   },
 ];

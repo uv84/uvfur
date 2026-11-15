@@ -514,7 +514,7 @@ export function AdminDashboard({
               <div className="admin-section-heading">
                 <div>
                   <h2>Store banner</h2>
-                  <p>Upload an image to show on the products page.</p>
+                  <p>Manage the products-page image and festive price label.</p>
                 </div>
               </div>
               <form
@@ -527,14 +527,34 @@ export function AdminDashboard({
                   defaultUrl={banner?.image_url ?? ""}
                   uploadPreset={cloudinaryUploadPreset}
                 />
+                <label>
+                  Festival name
+                  <input
+                    defaultValue={banner?.festival_name ?? ""}
+                    maxLength={80}
+                    name="festivalName"
+                    placeholder="e.g. Diwali"
+                  />
+                </label>
+                <label className="admin-festive-toggle">
+                  <input
+                    defaultChecked={banner?.is_festive_offer ?? false}
+                    name="isFestiveOffer"
+                    type="checkbox"
+                  />
+                  Show festive offer label on product prices
+                </label>
                 <p className="admin-banner-status" role="status">
                   Banner is currently {banner?.is_active ? "active" : "inactive"}.
+                </p>
+                <p className="admin-banner-status" role="status">
+                  Festive offer label is currently {banner?.is_festive_offer ? "enabled" : "disabled"}.
                 </p>
                 <FormFeedback state={bannerState} />
                 <FormFeedback state={bannerToggleState} />
                 <div className="admin-form-actions">
                   <button disabled={bannerPending} type="submit">
-                    {bannerPending ? "Saving..." : "Save banner image"}
+                    {bannerPending ? "Saving..." : "Save banner and offer"}
                   </button>
                   <button
                     aria-pressed={banner?.is_active ?? false}
@@ -656,7 +676,7 @@ export function AdminDashboard({
                     </label>
                   </div>
 
-                  <div className="admin-field-grid">
+                  <div className="admin-field-grid admin-price-grid">
                     <label>
                       Bosch price (INR)
                       <input
@@ -675,6 +695,17 @@ export function AdminDashboard({
                         min="0"
                         name="amazonPrice"
                         placeholder="e.g. 49990"
+                        step="0.01"
+                        type="number"
+                      />
+                    </label>
+                    <label>
+                      Flipkart price (INR)
+                      <input
+                        defaultValue={editingProduct?.flipkart_price ?? ""}
+                        min="0"
+                        name="flipkartPrice"
+                        placeholder="e.g. 48990"
                         step="0.01"
                         type="number"
                       />

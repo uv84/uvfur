@@ -9,9 +9,11 @@ const initialState: PriceRequestState = {};
 export function PriceRequestButton({
   productId,
   productName,
+  variant = "default",
 }: {
   productId: string;
   productName: string;
+  variant?: "default" | "featured";
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -24,12 +26,34 @@ export function PriceRequestButton({
   return (
     <>
       <button
-        className="catalog-ask-price"
+        className={`catalog-ask-price${variant === "featured" ? " product-price-request" : ""}`}
         onClick={() => setIsOpen(true)}
         ref={triggerRef}
         type="button"
       >
-        Ask for a better price <span aria-hidden="true">↗</span>
+        {variant === "featured" ? (
+          <>
+            <svg
+              aria-hidden="true"
+              className="product-price-request-icon"
+              fill="none"
+              viewBox="0 0 32 32"
+            >
+              <path
+                d="M4 13V5h8l15 15-7 7L4 13Z"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+              />
+              <circle cx="9" cy="10" r="1.5" fill="currentColor" />
+            </svg>
+            <span>Request a Better Price</span>
+            <span aria-hidden="true" className="product-price-request-arrow">→</span>
+          </>
+        ) : (
+          <>Ask for a better price <span aria-hidden="true">↗</span></>
+        )}
       </button>
 
       {isOpen &&
@@ -59,10 +83,10 @@ function PriceRequestDialog({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (state.whatsappUrl) {
+    if (state.whatsappUrl && !state.whatsappNotificationError) {
       window.location.assign(state.whatsappUrl);
     }
-  }, [state.whatsappUrl]);
+  }, [state.whatsappUrl, state.whatsappNotificationError]);
 
   useEffect(() => {
     closeButtonRef.current?.focus();
@@ -115,6 +139,16 @@ function PriceRequestDialog({
             <span aria-hidden="true">✓</span>
             <h2 id="price-request-title">Request received.</h2>
             <p>{state.message}</p>
+            {state.whatsappNotificationError && state.whatsappUrl && (
+              <>
+                <p className="price-request-error" role="alert">
+                  {state.whatsappNotificationError}
+                </p>
+                <a className="price-request-submit" href={state.whatsappUrl}>
+                  Continue to WhatsApp <span aria-hidden="true">↗</span>
+                </a>
+              </>
+            )}
             <button className="price-request-submit" onClick={onClose} type="button">
               Done
             </button>
@@ -157,7 +191,7 @@ function PriceRequestDialog({
                 {!pending && <span aria-hidden="true">↗</span>}
               </button>
               <p className="price-request-privacy">
-                Your name, phone, and email are saved with this product request for our team.
+                Your contact details are saved with your request and shared with our team via WhatsApp to follow up.
               </p>
             </form>
           </>

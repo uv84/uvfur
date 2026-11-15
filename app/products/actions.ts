@@ -6,6 +6,7 @@ import "@/lib/neon";
 export type PriceRequestState = {
   error?: string;
   message?: string;
+  whatsappNotificationError?: string;
   whatsappUrl?: string;
 };
 
@@ -16,6 +17,89 @@ const PHONE_PATTERN = /^\+?[\d\s().-]{7,20}$/;
 function formText(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";
+}
+
+async function notifyStoreOnWhatsApp({
+  email,
+  fullName,
+  phone,
+  productName,
+  recipient,
+}: {
+  email: string;
+  fullName: string;
+  phone: string;
+  productName: string;
+  recipient: string;
+}): Promise<"sent" | "not-configured" | "failed"> {
+  const accessToken = process.env.WHATSAPP_CLOUD_API_TOKEN?.trim() ?? "";
+  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID?.trim() ?? "";
+  const templateName =
+    process.env.WHATSAPP_NOTIFICATION_TEMPLATE_NAME?.trim() ?? "";
+  const language =
+    process.env.WHATSAPP_NOTIFICATION_TEMPLATE_LANGUAGE?.trim() || "en_US";
+  const apiVersion =
+    process.env.WHATSAPP_GRAPH_API_VERSION?.trim() || "v23.0";
+  const requiredValues = [accessToken, phoneNumberId, templateName];
+
+  if (requiredValues.every((value) => !value)) {
+    return "not-configured";
+  }
+
+  if (
+    requiredValues.some((value) => !value) ||
+    !/^\d+$/.test(phoneNumberId) ||
+    !/^[a-z0-9_]+$/.test(templateName) ||
+    !/^v\d+\.\d+$/.test(apiVersion)
+  ) {
+    console.error("WhatsApp Cloud API configuration is incomplete or invalid.");
+    return "failed";
+  }
+
+  try {
+    const response = await fetch(
+      `https://graph.facebook.com/${apiVersion}/${phoneNumberId}/messages`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: recipient,
+          type: "template",
+          template: {
+            name: templateName,
+            language: { code: language },
+            components: [
+              {
+                type: "body",
+                parameters: [productName, fullName, phone, email].map((text) => ({
+                  type: "text",
+                  text,
+                })),
+              },
+            ],
+          },
+        }),
+        cache: "no-store",
+      },
+    );
+
+    if (!response.ok) {
+      console.error(`WhatsApp Cloud API returned HTTP ${response.status}.`);
+      return "failed";
+    }
+
+    return "sent";
+  } catch (error) {
+    if (!(error instanceof TypeError)) {
+      throw error;
+    }
+    console.error("WhatsApp Cloud API request failed due to a network error.");
+    return "failed";
+  }
 }
 
 export async function createPriceRequest(
@@ -89,9 +173,29 @@ export async function createPriceRequest(
     `Email: ${email}`,
   ].join("\n");
   const query = new URLSearchParams({ text: message });
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?${query.toString()}`;
+  const notificationResult = await notifyStoreOnWhatsApp({
+    email,
+    fullName,
+    phone,
+    productName: String(inserted[0].product_name),
+    recipient: whatsappNumber,
+  });
+
+  if (notificationResult === "failed") {
+    return {
+      message: "Your request is saved. You can still send it to our team on WhatsApp.",
+      whatsappNotificationError:
+        "We couldn't send the automatic WhatsApp notification. Please continue to WhatsApp to send your request manually.",
+      whatsappUrl,
+    };
+  }
 
   return {
-    message: "Your request is saved. Opening WhatsApp…",
-    whatsappUrl: `https://wa.me/${whatsappNumber}?${query.toString()}`,
+    message:
+      notificationResult === "sent"
+        ? "Your request is saved. We notified our team, and WhatsApp is opening so you can also send your message."
+        : "Your request is saved. Opening WhatsApp so you can send it to our team…",
+    whatsappUrl,
   };
 }

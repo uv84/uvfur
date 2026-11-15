@@ -257,6 +257,7 @@ export async function saveProduct(
   const categoryId = formText(formData, "categoryId");
   const amazonPrice = optionalPrice(formText(formData, "amazonPrice"), "Amazon price");
   const boschPrice = optionalPrice(formText(formData, "boschPrice"), "Bosch price");
+  const flipkartPrice = optionalPrice(formText(formData, "flipkartPrice"), "Flipkart price");
 
   if ("error" in image) {
     return { error: image.error };
@@ -302,13 +303,14 @@ export async function saveProduct(
             description = ${description},
             amazon_price = ${amazonPrice}::numeric,
             bosch_price = ${boschPrice}::numeric,
+            flipkart_price = ${flipkartPrice}::numeric,
             image_url = ${imageUrl}
         WHERE id = ${id}::uuid
       `;
     } else {
       await sql`
         INSERT INTO products (
-          category_id, name, slug, description, amazon_price, bosch_price, image_url
+          category_id, name, slug, description, amazon_price, bosch_price, flipkart_price, image_url
         )
         VALUES (
           ${categoryId}::uuid,
@@ -317,6 +319,7 @@ export async function saveProduct(
           ${description},
           ${amazonPrice}::numeric,
           ${boschPrice}::numeric,
+          ${flipkartPrice}::numeric,
           ${imageUrl}
         )
       `;
@@ -436,14 +439,29 @@ export async function saveBanner(
     return { error: image.error };
   }
 
+  const festivalName = formText(formData, "festivalName");
+  const isFestiveOffer = formData.get("isFestiveOffer") === "on";
+
+  if (festivalName.length > 80) {
+    return { error: "Festival names must be 80 characters or fewer." };
+  }
+
+  if (isFestiveOffer && !festivalName) {
+    return { error: "Enter a festival name before enabling the festive offer label." };
+  }
+
   const sql = getDatabase();
 
   try {
     await sql`
-      INSERT INTO site_banner (id, image_url, is_active)
-      VALUES (1, ${image.url}, false)
+      INSERT INTO site_banner (
+        id, image_url, is_active, festival_name, is_festive_offer
+      )
+      VALUES (1, ${image.url}, false, ${festivalName}, ${isFestiveOffer})
       ON CONFLICT (id) DO UPDATE
       SET image_url = EXCLUDED.image_url,
+          festival_name = EXCLUDED.festival_name,
+          is_festive_offer = EXCLUDED.is_festive_offer,
           updated_at = now()
     `;
   } catch (error) {
@@ -452,8 +470,9 @@ export async function saveBanner(
 
   revalidatePath("/");
   revalidatePath("/products");
+  revalidatePath("/products/[slug]", "page");
   revalidatePath("/admin");
-  return { message: "Banner image saved." };
+  return { message: "Banner and festive offer settings saved." };
 }
 
 export async function toggleBanner(

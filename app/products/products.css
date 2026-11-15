@@ -109,6 +109,15 @@
   background: var(--paper);
 }
 
+.catalog-intro.has-banner-background {
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-position: center;
+  background-size: cover;
+}
+
 .catalog-intro .eyebrow {
   margin-bottom: 16px;
 }
@@ -430,20 +439,6 @@
   line-height: 1.7;
 }
 
-.catalog-product-prices {
-  width: 100%;
-  margin: auto 0 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 15px;
-  color: #727d8d;
-  font-size: 10px;
-}
-
-.catalog-product-prices strong {
-  color: #1976e8;
-}
-
 .catalog-empty-state {
   padding: 35px;
   border: 1px solid #e3e8ef;
@@ -519,57 +514,289 @@
   line-height: 1.8;
 }
 
-.product-detail-prices {
-  margin: 26px 0 22px;
-  padding: 17px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px 34px;
-  border: 1px solid #e3e8ef;
-  border-radius: 7px;
-  background: #fff;
-}
-
-.product-detail-prices div {
+.product-prices {
+  margin: 0 0 20px;
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+  border-bottom: 1px solid #e1e9fa;
+}
+
+.product-pricing-panel {
+  margin: 22px 0 14px;
+  padding: 16px;
+  border: 1px solid #dce6ff;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 15px 34px rgba(34, 91, 188, .13);
+}
+
+.festive-offer-label {
+  min-height: 32px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 5px 12px;
+  border: 1px solid #ffc34d;
+  border-radius: 999px;
+  background: linear-gradient(100deg, #4a0b64, #8b1458);
+  box-shadow: 0 4px 12px rgba(115, 25, 92, .16);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.festive-offer-label svg {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  color: #ffd35f;
+}
+
+.festive-offer-label strong {
+  color: #ffda69;
+}
+
+.product-price {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  padding: 2px 10px 14px;
+  border-right: 1px solid #d6e1fb;
+}
+
+.product-price:last-of-type {
+  border-right: 0;
+}
+
+.product-price-brand {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(18px, 1.5vw, 22px);
+  line-height: 1;
+}
+
+.product-price-brand-bosch {
+  color: #e31b23;
+  letter-spacing: .01em;
+}
+
+.product-price-brand-amazon {
+  position: relative;
+  width: fit-content;
+  color: #111;
+  font-size: 24px;
+  letter-spacing: -.06em;
+}
+
+.product-price-brand-amazon::after {
+  position: absolute;
+  right: 3px;
+  bottom: -3px;
+  left: 18px;
+  height: 7px;
+  border-bottom: 3px solid #f59a23;
+  border-radius: 50%;
+  content: "";
+}
+
+.product-price-brand-flipkart {
+  color: #1769e8;
+  font-size: 21px;
+  font-style: italic;
+}
+
+.product-flipkart-bag {
+  width: 25px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  background: #ffdf00;
+  color: #1769e8;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.product-price-label {
+  color: #405274;
+  font-size: 11px;
+}
+
+.product-price-value {
+  overflow-wrap: anywhere;
+  color: #101f43;
+  font-size: clamp(16px, 1.4vw, 21px);
+  font-weight: 800;
+  letter-spacing: -.045em;
+  line-height: 1.15;
+}
+
+.product-price-empty {
+  grid-column: 1 / -1;
+  margin: 8px 0 20px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.product-pricing-panel .product-price-request {
+  width: 100%;
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 30px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 18px;
+  background: linear-gradient(110deg, #0877fa, #074dce);
+  box-shadow: 0 11px 22px rgba(11, 76, 195, .23);
+  color: #fff;
+  cursor: pointer;
+  font-size: clamp(15px, 1.6vw, 22px);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-align: left;
+  text-transform: none;
+}
+
+.product-pricing-panel .product-price-request:hover {
+  background: linear-gradient(110deg, #086de7, #0645b9);
+  color: #fff;
+}
+
+.product-price-request-icon {
+  width: 28px;
+  height: 28px;
+  padding-right: 11px;
+  border-right: 1px solid rgba(255, 255, 255, .4);
+  box-sizing: content-box;
+}
+
+.product-price-request-arrow {
+  justify-self: end;
+  font-size: 29px;
+  font-weight: 400;
+}
+
+.product-price-note {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #edf3ff;
+  color: #40577c;
+  font-size: clamp(11px, 1vw, 13px);
+  line-height: 1.5;
+}
+
+.product-price-note svg {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  color: #1769e8;
+}
+
+.catalog-product-pricing-panel {
+  width: 100%;
+  align-self: stretch;
+  box-sizing: border-box;
+  margin: 14px 0 0;
+  padding: 12px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(34, 91, 188, .1);
+}
+
+.catalog-product-pricing-panel .festive-offer-label {
+  min-height: 26px;
+  gap: 6px;
+  margin-bottom: 9px;
+  padding: 4px 8px;
+  font-size: 9px;
+}
+
+.catalog-product-pricing-panel .festive-offer-label svg {
+  width: 16px;
+  height: 16px;
+}
+
+.catalog-product-pricing-panel .product-prices {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 12px;
+}
+
+.catalog-product-pricing-panel .product-price {
   gap: 5px;
+  padding: 2px 6px 10px;
 }
 
-.product-detail-prices span {
-  color: var(--muted);
-  font-size: 10px;
+.catalog-product-pricing-panel .product-price-brand {
+  min-height: 28px;
+  gap: 4px;
+  font-size: clamp(12px, 1.3vw, 16px);
 }
 
-.product-detail-prices strong {
-  color: #1976e8;
-  font-size: 16px;
+.catalog-product-pricing-panel .product-price-brand-amazon {
+  font-size: 17px;
 }
 
-.product-detail-prices p {
-  margin: 0;
-  color: var(--muted);
+.catalog-product-pricing-panel .product-price-brand-flipkart {
+  font-size: 14px;
+}
+
+.catalog-product-pricing-panel .product-flipkart-bag {
+  width: 18px;
+  height: 18px;
   font-size: 12px;
 }
 
-.product-detail-copy .catalog-ask-price {
-  min-height: 46px;
-  padding: 0 18px;
-  border: 0;
-  border-radius: 6px;
-  background: #1976e8;
-  color: #fff;
-  cursor: pointer;
+.catalog-product-pricing-panel .product-price-label {
+  font-size: 9px;
 }
 
-.product-detail-copy .catalog-ask-price:hover {
-  background: #155fc0;
+.catalog-product-pricing-panel .product-price-value {
+  font-size: clamp(11px, 1vw, 15px);
 }
 
-.product-detail-note {
-  margin: 14px 0 22px;
-  color: var(--muted);
-  font-size: 10px;
-  line-height: 1.6;
+.catalog-product-pricing-panel .product-price-request {
+  min-height: 48px;
+  grid-template-columns: 30px minmax(0, 1fr) 22px;
+  gap: 8px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: clamp(12px, 1.2vw, 16px);
+}
+
+.catalog-product-pricing-panel .product-price-request-icon {
+  width: 21px;
+  height: 21px;
+  padding-right: 8px;
+}
+
+.catalog-product-pricing-panel .product-price-request-arrow {
+  font-size: 22px;
+}
+
+.catalog-product-pricing-panel .product-price-note {
+  min-height: 40px;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 9px;
+}
+
+.catalog-product-pricing-panel .product-price-note svg {
+  width: 20px;
+  height: 20px;
 }
 
 .product-detail-back {
@@ -744,19 +971,6 @@
 .catalog-product strong {
   color: var(--wood);
   font-size: 11px;
-}
-
-.catalog-product-prices {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 14px;
-  margin-bottom: 8px;
-  color: var(--muted);
-  font-size: 10px;
-}
-
-.catalog-product-prices strong {
-  color: var(--ink);
 }
 
 .catalog-ask-price {
@@ -1045,6 +1259,10 @@
     padding: 49px 7% 40px;
   }
 
+  .catalog-intro.has-banner-background {
+    min-height: 340px;
+  }
+
   .catalog-intro h1 {
     font-size: clamp(48px, 13vw, 68px);
   }
@@ -1116,6 +1334,53 @@
 
   .product-detail-copy {
     padding: 0;
+  }
+
+  .product-detail-copy .product-price {
+    padding: 13px 10px;
+    border-right: 0;
+    border-bottom: 1px solid #d6e1fb;
+  }
+
+  .product-detail-copy .product-prices {
+    grid-template-columns: 1fr;
+  }
+
+  .product-detail-copy .product-price:last-of-type {
+    border-bottom: 0;
+  }
+
+  .product-detail-copy .product-pricing-panel {
+    padding: 15px;
+    border-radius: 19px;
+  }
+
+  .product-detail-copy .product-price-value {
+    font-size: clamp(24px, 7vw, 32px);
+  }
+
+  .product-pricing-panel .product-price-request {
+    min-height: 64px;
+    grid-template-columns: 45px minmax(0, 1fr) 28px;
+    gap: 12px;
+    padding: 0 15px;
+    border-radius: 17px;
+    font-size: clamp(16px, 4vw, 22px);
+  }
+
+  .product-price-request-icon {
+    width: 32px;
+    height: 32px;
+    padding-right: 12px;
+  }
+
+  .product-price-request-arrow {
+    font-size: 29px;
+  }
+
+  .product-price-note {
+    gap: 10px;
+    padding: 11px 13px;
   }
 
   .catalog-card {
@@ -1488,6 +1753,7 @@
   font-weight: 700;
   letter-spacing: .04em;
   text-transform: uppercase;
+  text-decoration: none;
   cursor: pointer;
 }
 

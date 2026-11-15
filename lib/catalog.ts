@@ -23,6 +23,7 @@ export type Product = {
   description: string;
   amazon_price: string | null;
   bosch_price: string | null;
+  flipkart_price: string | null;
   image_url: string;
 };
 
@@ -36,6 +37,8 @@ export type Testimonial = {
 export type SiteBanner = {
   image_url: string;
   is_active: boolean;
+  festival_name: string;
+  is_festive_offer: boolean;
 };
 
 export type AdminOverview = {
@@ -136,6 +139,7 @@ export async function getCatalogData() {
         products.description,
         products.amazon_price::text,
         products.bosch_price::text,
+        products.flipkart_price::text,
         products.image_url
       FROM products
       JOIN categories ON categories.id = products.category_id
@@ -163,6 +167,7 @@ export async function getCatalogData() {
     description: String(row.description),
     amazon_price: row.amazon_price === null ? null : String(row.amazon_price),
     bosch_price: row.bosch_price === null ? null : String(row.bosch_price),
+    flipkart_price: row.flipkart_price === null ? null : String(row.flipkart_price),
     image_url: String(row.image_url),
   }));
 
@@ -190,7 +195,7 @@ export async function getSiteBanner(): Promise<SiteBanner | null> {
   await connection();
   const sql = getDatabase();
   const rows = await runCatalogQuery(() => sql`
-    SELECT image_url, is_active
+    SELECT image_url, is_active, festival_name, is_festive_offer
     FROM site_banner
     WHERE id = 1
     LIMIT 1
@@ -204,6 +209,8 @@ export async function getSiteBanner(): Promise<SiteBanner | null> {
   return {
     image_url: String(row.image_url),
     is_active: Boolean(row.is_active),
+    festival_name: String(row.festival_name),
+    is_festive_offer: Boolean(row.is_festive_offer),
   };
 }
 
@@ -288,6 +295,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       products.description,
       products.amazon_price::text,
       products.bosch_price::text,
+      products.flipkart_price::text,
       products.image_url
     FROM products
     JOIN categories ON categories.id = products.category_id
@@ -312,6 +320,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     description: String(row.description),
     amazon_price: row.amazon_price === null ? null : String(row.amazon_price),
     bosch_price: row.bosch_price === null ? null : String(row.bosch_price),
+    flipkart_price: row.flipkart_price === null ? null : String(row.flipkart_price),
     image_url: String(row.image_url),
   };
 }

@@ -5,7 +5,6 @@ import { getCatalogData, getSiteBanner } from "@/lib/catalog";
 import { BrandLogo } from "../BrandLogo";
 import { CatalogBrowser } from "./CatalogBrowser";
 import { ProductsHeader } from "./ProductsHeader";
-import { SiteBanner } from "../SiteBanner";
 import "./products.css";
 
 export const metadata: Metadata = {
@@ -60,15 +59,20 @@ async function ProductsContent() {
 
       <ProductsHeader />
 
-      <SiteBanner banner={banner} />
-
       <div className="products-breadcrumb">
         <Link href="/">Home</Link>
         <span aria-hidden="true">/</span>
         <span>Products</span>
       </div>
 
-      <section className="catalog-intro">
+      <section
+        className={`catalog-intro${banner?.is_active ? " has-banner-background" : ""}`}
+        style={{
+          backgroundImage: banner?.is_active
+            ? `linear-gradient(90deg, rgba(255, 255, 255, .78) 0%, rgba(255, 255, 255, .60) 52%, rgba(255, 255, 255, .25) 100%), url("${banner.image_url}")`
+            : undefined,
+        }}
+      >
         <p className="eyebrow">Thoughtful technology. Everyday comfort.</p>
         <h1>Find your next<br /><em>home essential.</em></h1>
         <p>
@@ -80,6 +84,8 @@ async function ProductsContent() {
       <div className="catalog-layout">
         <CatalogBrowser
           categories={categories}
+          festivalName={banner?.festival_name ?? ""}
+          festiveOfferEnabled={banner?.is_festive_offer ?? false}
           products={products}
           exploreTopics={exploreTopics}
         />
