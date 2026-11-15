@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/catalog";
 import { PriceRequestButton } from "../PriceRequestButton";
+import { BrandLogo } from "../../BrandLogo";
 import { ProductsHeader } from "../ProductsHeader";
 import "../products.css";
 
@@ -70,16 +71,16 @@ async function ProductDetailContent({
           <p className="product-detail-description">{product.description}</p>
 
           <div className="product-detail-prices" aria-label="Product pricing">
-            {product.amazon_price !== null && (
-              <div>
-                <span>Retail price</span>
-                <strong>{formatPrice(product.amazon_price)}</strong>
-              </div>
-            )}
             {product.bosch_price !== null && (
               <div>
-                <span>Our price</span>
+                <span>Bosch price</span>
                 <strong>{formatPrice(product.bosch_price)}</strong>
+              </div>
+            )}
+            {product.amazon_price !== null && (
+              <div>
+                <span>Amazon price</span>
+                <strong>{formatPrice(product.amazon_price)}</strong>
               </div>
             )}
             {product.amazon_price === null && product.bosch_price === null && (
@@ -101,9 +102,8 @@ async function ProductDetailContent({
       </section>
 
       <footer className="site-footer">
-        <Link className="brand footer-brand" href="/" aria-label="Appliance Studio home">
-          <span className="brand-mark" aria-hidden="true">A</span>
-          <span className="brand-name"><strong>APPLIANCE</strong><small>STUDIO</small></span>
+        <Link className="brand footer-brand" href="/" aria-label="Beingstones home">
+          <BrandLogo />
         </Link>
         <p>Better appliances. Personal service.</p>
         <span>Independent retailer; not affiliated with Bosch.</span>

@@ -1132,3 +1132,372 @@
 .admin-retry:hover {
   background: #155fc0;
 }
+
+.admin-navigation {
+  max-height: 270px;
+  overflow: auto;
+}
+
+.admin-navigation .admin-nav-action {
+  flex: none;
+}
+
+.admin-panel .admin-nav-info span {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
+}
+
+.admin-navigation {
+  max-height: none;
+}
+
+.admin-dashboard {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-dashboard-welcome {
+  min-height: 120px;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border: 1px solid #e8ebef;
+  border-radius: 9px;
+  background: linear-gradient(110deg, #fff 58%, #eff6ff);
+}
+
+.admin-dashboard-welcome .eyebrow {
+  margin-bottom: 7px;
+}
+
+.admin-dashboard-welcome h2 {
+  margin: 0 0 6px;
+  color: #303a49;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.admin-dashboard-welcome p:last-child {
+  margin: 0;
+  color: #7c8795;
+  font-size: 11px;
+}
+
+.admin-dashboard-welcome .admin-publish-button {
+  flex: none;
+}
+
+.admin-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-metric-card {
+  min-width: 0;
+  padding: 17px;
+  display: grid;
+  grid-template-columns: 35px 1fr;
+  align-items: center;
+  column-gap: 11px;
+  border: 1px solid #e8ebef;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.admin-metric-icon {
+  width: 35px;
+  height: 35px;
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #eaf3ff;
+  color: #1976e8;
+  font-size: 17px;
+}
+
+.admin-metric-card p {
+  margin: 0;
+  color: #657184;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.admin-metric-card strong {
+  margin-top: 5px;
+  color: #263345;
+  font-size: 23px;
+  line-height: 1.1;
+}
+
+.admin-metric-card > span:last-child {
+  grid-column: 2;
+  margin-top: 4px;
+  color: #929cab;
+  font-size: 9px;
+}
+
+.admin-dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+  align-items: start;
+  gap: 14px;
+}
+
+.admin-dashboard-panel {
+  min-height: 300px;
+}
+
+.admin-dashboard-panel .admin-panel-heading {
+  align-items: center;
+}
+
+.admin-dashboard-panel .admin-panel-heading > div {
+  display: grid;
+  gap: 5px;
+}
+
+.admin-dashboard-panel .admin-panel-heading p {
+  margin: 0;
+  color: #8792a0;
+  font-size: 10px;
+}
+
+.admin-dashboard-panel .admin-panel-heading button {
+  flex: none;
+}
+
+.admin-list-count {
+  margin-left: 5px;
+  color: #8792a0;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.admin-category-stats,
+.admin-enquiry-list,
+.admin-manage-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-category-stats {
+  max-height: 355px;
+  overflow: auto;
+}
+
+.admin-category-stats li {
+  min-height: 48px;
+  padding: 8px 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid #edf0f4;
+}
+
+.admin-category-stats li > span {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.admin-category-stats strong {
+  overflow: hidden;
+  color: #435064;
+  font-size: 11px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-category-stats small {
+  color: #929cab;
+  font-size: 9px;
+}
+
+.admin-category-stats b {
+  min-width: 30px;
+  color: #1976e8;
+  font-size: 12px;
+  text-align: right;
+}
+
+.admin-enquiry-list {
+  display: grid;
+}
+
+.admin-enquiry-list li {
+  padding: 12px 0;
+  display: grid;
+  gap: 6px;
+  border-top: 1px solid #edf0f4;
+}
+
+.admin-enquiry-heading,
+.admin-enquiry-contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-enquiry-heading strong {
+  color: #394557;
+  font-size: 11px;
+}
+
+.admin-enquiry-heading time {
+  flex: none;
+  color: #929cab;
+  font-size: 9px;
+}
+
+.admin-enquiry-product {
+  overflow: hidden;
+  color: #657184;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-enquiry-contact {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  color: #1976e8;
+  font-size: 9px;
+}
+
+.admin-manage-list {
+  max-height: 310px;
+  overflow-y: auto;
+  display: grid;
+}
+
+.admin-editor {
+  display: grid;
+  gap: 12px;
+  scroll-margin-top: 16px;
+}
+
+.admin-manage-list li {
+  min-height: 58px;
+  padding: 9px 2px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid #edf0f4;
+}
+
+.admin-manage-thumb {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 5px;
+  background-color: #f2f4f7;
+  background-position: center;
+  background-size: cover;
+}
+
+.admin-manage-info {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.admin-manage-info strong,
+.admin-manage-info > span {
+  overflow: hidden;
+  color: #394557;
+  font-size: 10px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-manage-info > span {
+  color: #8290a1;
+  font-size: 9px;
+  font-weight: 400;
+}
+
+.admin-manage-actions {
+  display: flex;
+  flex: none;
+  gap: 6px;
+}
+
+.admin-manage-actions button {
+  min-height: 29px;
+  padding: 0 9px;
+  border: 1px solid #dce2e9;
+  border-radius: 5px;
+  background: white;
+  color: #49576a;
+  font: inherit;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.admin-manage-actions button:disabled {
+  cursor: wait;
+  opacity: .6;
+}
+
+.admin-manage-actions button.admin-delete {
+  color: #a13d2a;
+}
+
+@media (max-width: 1050px) {
+  .admin-metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-dashboard-welcome {
+    padding: 19px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-metric-grid {
+    gap: 8px;
+  }
+
+  .admin-metric-card {
+    padding: 12px;
+    grid-template-columns: 29px 1fr;
+    column-gap: 8px;
+  }
+
+  .admin-metric-icon {
+    width: 29px;
+    height: 29px;
+  }
+
+  .admin-metric-card strong {
+    font-size: 20px;
+  }
+
+  .admin-dashboard-welcome {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-dashboard-panel {
+    padding: 13px;
+  }
+}

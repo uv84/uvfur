@@ -1,14 +1,11 @@
 import Link from "next/link";
+import { BrandLogo } from "../BrandLogo";
 
 export function ProductsHeader() {
   return (
     <header className="site-header">
-      <Link className="brand" href="/" aria-label="Appliance Studio home">
-        <span className="brand-mark" aria-hidden="true">A</span>
-        <span className="brand-name">
-          <strong>APPLIANCE</strong>
-          <small>STUDIO</small>
-        </span>
+      <Link className="brand" href="/" aria-label="Beingstones home">
+        <BrandLogo priority />
       </Link>
 
       <nav className="main-nav" aria-label="Main navigation">

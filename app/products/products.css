@@ -919,11 +919,6 @@
   color: var(--paper);
 }
 
-.products-page .footer-brand .brand-mark {
-  border-color: #8abaff;
-  color: #8abaff;
-}
-
 .products-page .site-footer > p,
 .products-page .site-footer > span {
   margin: 0;
@@ -1028,20 +1023,6 @@
   .products-page .site-header {
     height: 69px;
     padding: 0 5%;
-  }
-
-  .products-page .brand-mark {
-    width: 34px;
-    height: 34px;
-    font-size: 25px;
-  }
-
-  .products-page .brand-name strong {
-    font-size: 10px;
-  }
-
-  .products-page .brand-name small {
-    font-size: 7px;
   }
 
   .products-page .header-actions {

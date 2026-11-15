@@ -1,7 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { connection } from "next/server";
-import { CatalogUnavailableError, getCatalogData } from "@/lib/catalog";
+import { BrandLogo } from "../BrandLogo";
+import {
+  CatalogUnavailableError,
+  getAdminOverview,
+  getCatalogData,
+  getSiteBanner,
+  getTestimonials,
+} from "@/lib/catalog";
 import { isAdminAuthenticated, isAdminConfigured } from "@/lib/admin-auth";
 import { AdminDashboard, AdminLoginForm } from "./AdminForms";
 import "./admin.css";
@@ -15,9 +22,8 @@ export default function AdminPage() {
   return (
     <main className="admin-page">
       <header className="admin-header">
-        <Link className="brand" href="/" aria-label="Appliance Studio home">
-          <span className="brand-mark" aria-hidden="true">A</span>
-          <span className="brand-name"><strong>APPLIANCE</strong><small>STUDIO</small></span>
+        <Link className="brand" href="/" aria-label="Beingstones home">
+          <BrandLogo priority />
         </Link>
         <Link href="/products">View catalog <span aria-hidden="true">↗</span></Link>
       </header>
@@ -52,9 +58,17 @@ async function AdminContent() {
   }
 
   let catalogData;
+  let testimonials;
+  let overview;
+  let banner;
 
   try {
-    catalogData = await getCatalogData();
+    [catalogData, testimonials, overview, banner] = await Promise.all([
+      getCatalogData(),
+      getTestimonials(),
+      getAdminOverview(),
+      getSiteBanner(),
+    ]);
   } catch (error) {
     if (!(error instanceof CatalogUnavailableError)) {
       throw error;
@@ -63,7 +77,7 @@ async function AdminContent() {
     const message = {
       configuration: "Add your Neon DATABASE_URL to .env.local, then restart the app.",
       network: "The app cannot reach Neon right now. Check your internet/firewall access to Neon and try again.",
-      schema: "The catalog tables are missing. Run db/schema.sql in the Neon SQL Editor to create the tables and sample data.",
+      schema: "A database table is missing. For a new database run db/schema.sql; for an existing database run the matching file in db/migrations in the Neon SQL Editor.",
     }[error.reason];
 
     return (
@@ -80,9 +94,12 @@ async function AdminContent() {
     <section className="admin-content">
       <AdminDashboard
         categories={catalogData.categories}
+        banner={banner}
         cloudinaryCloudName={process.env.CLOUDINARY_CLOUD_NAME}
         cloudinaryUploadPreset={process.env.CLOUDINARY_UPLOAD_PRESET}
+        overview={overview}
         products={catalogData.products}
+        testimonials={testimonials}
       />
     </section>
   );

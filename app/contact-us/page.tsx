@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BrandLogo } from "../BrandLogo";
 import "./contact-us.css";
 
 export const metadata: Metadata = {
@@ -55,12 +56,8 @@ export default function ContactPage() {
       </div>
 
       <header className="site-header">
-        <Link className="brand" href="/" aria-label="Appliance Studio home">
-          <span className="brand-mark" aria-hidden="true">A</span>
-          <span className="brand-name">
-            <strong>APPLIANCE</strong>
-            <small>STUDIO</small>
-          </span>
+        <Link className="brand" href="/" aria-label="Beingstones home">
+          <BrandLogo priority />
         </Link>
 
         <nav className="main-nav" aria-label="Page navigation">
@@ -166,12 +163,8 @@ export default function ContactPage() {
       </section>
 
       <footer className="site-footer">
-        <Link className="brand footer-brand" href="/" aria-label="Appliance Studio home">
-          <span className="brand-mark" aria-hidden="true">A</span>
-          <span className="brand-name">
-            <strong>APPLIANCE</strong>
-            <small>STUDIO</small>
-          </span>
+        <Link className="brand footer-brand" href="/" aria-label="Beingstones home">
+          <BrandLogo />
         </Link>
         <p>Better appliances. Personal service.</p>
         <a href="#top">Back to top <span aria-hidden="true">↑</span></a>

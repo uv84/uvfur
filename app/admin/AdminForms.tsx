@@ -5,18 +5,23 @@ import Link from "next/link";
 import {
   deleteCategory,
   deleteProduct,
+  deleteTestimonial,
   loginAdmin,
   logoutAdmin,
   saveCategory,
+  saveBanner,
   saveProduct,
+  saveTestimonial,
+  toggleBanner,
   type ActionResult,
 } from "./actions";
-import type { Category, Product } from "@/lib/catalog";
+import type { AdminOverview, Category, Product, SiteBanner, Testimonial } from "@/lib/catalog";
 
 const initialState: ActionResult = {};
 const NEW_ITEM = "new";
 
-type Selection = { kind: "product" | "category"; id: string } | null;
+type Selection = { kind: "product" | "category" | "testimonial"; id: string } | null;
+type AdminView = "home" | "products" | "category" | "testimonials" | "banner";
 
 function FormFeedback({ state }: { state: ActionResult }) {
   if (!state.error && !state.message) {
@@ -142,23 +147,35 @@ export function AdminLoginForm() {
 export function AdminDashboard({
   categories,
   products,
+  testimonials,
+  banner,
+  overview,
   cloudinaryCloudName,
   cloudinaryUploadPreset,
 }: {
   categories: Category[];
   products: Product[];
+  testimonials: Testimonial[];
+  banner: SiteBanner | null;
+  overview: AdminOverview;
   cloudinaryCloudName?: string;
   cloudinaryUploadPreset?: string;
 }) {
-  const [selection, setSelection] = useState<Selection>({ kind: "product", id: NEW_ITEM });
+  const [activeView, setActiveView] = useState<AdminView>("home");
+  const [selection, setSelection] = useState<Selection>(null);
   const [selectedParentCategoryId, setSelectedParentCategoryId] = useState("");
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
   const [formKey, setFormKey] = useState(0);
   const [notice, setNotice] = useState<ActionResult>({});
   const [isDeleting, startDelete] = useTransition();
+  const editorRef = useRef<HTMLDivElement>(null);
+  const editorFieldRef = useRef<HTMLInputElement>(null);
 
   const [productState, productAction, productPending] = useActionState(saveProduct, initialState);
   const [categoryState, categoryAction, categoryPending] = useActionState(saveCategory, initialState);
+  const [testimonialState, testimonialAction, testimonialPending] = useActionState(saveTestimonial, initialState);
+  const [bannerState, bannerAction, bannerPending] = useActionState(saveBanner, initialState);
+  const [bannerToggleState, bannerToggleAction, bannerTogglePending] = useActionState(toggleBanner, initialState);
 
   const editingProduct =
     selection?.kind === "product" && selection.id !== NEW_ITEM
@@ -168,8 +185,13 @@ export function AdminDashboard({
     selection?.kind === "category" && selection.id !== NEW_ITEM
       ? categories.find((category) => category.id === selection.id) ?? null
       : null;
+  const editingTestimonial =
+    selection?.kind === "testimonial" && selection.id !== NEW_ITEM
+      ? testimonials.find((testimonial) => testimonial.id === selection.id) ?? null
+      : null;
   const isNewProduct = selection?.kind === "product" && selection.id === NEW_ITEM;
   const isNewCategory = selection?.kind === "category" && selection.id === NEW_ITEM;
+  const isNewTestimonial = selection?.kind === "testimonial" && selection.id === NEW_ITEM;
 
   const parentCategories = categories.filter(
     (category) => !category.parent_id && category.id !== editingCategory?.id,
@@ -191,6 +213,24 @@ export function AdminDashboard({
     }
   }, [categoryState]);
 
+  useEffect(() => {
+    if (activeView === "home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    editorFieldRef.current?.focus({ preventScroll: true });
+    const editorTop = (
+      editorFieldRef.current ?? editorRef.current
+    )?.getBoundingClientRect().top;
+    if (editorTop !== undefined) {
+      window.scrollTo({
+        top: Math.max(0, window.scrollY + editorTop - 16),
+        behavior: "smooth",
+      });
+    }
+  }, [activeView, selection]);
+
   function select(item: Selection) {
     setSelection(item);
     setNotice({});
@@ -208,6 +248,21 @@ export function AdminDashboard({
     } else {
       setSelectedParentCategoryId(product?.category_id ?? "");
       setSelectedSubcategoryId("");
+    }
+  }
+
+  function showView(view: AdminView) {
+    setActiveView(view);
+    if (view === "home") {
+      select(null);
+    } else if (view === "products") {
+      select({ kind: "product", id: NEW_ITEM });
+    } else if (view === "category") {
+      select({ kind: "category", id: NEW_ITEM });
+    } else if (view === "testimonials") {
+      select({ kind: "testimonial", id: NEW_ITEM });
+    } else {
+      select(null);
     }
   }
 
@@ -229,20 +284,31 @@ export function AdminDashboard({
           <Link className="admin-back-link" href="/" aria-label="Back to home">←</Link>
           <div>
             <h1>
-              {selection?.kind === "category"
-                ? editingCategory ? "Edit Category" : "Add New Category"
-                : editingProduct ? "Edit Product" : "Add New Product"}
+              {activeView === "home"
+                ? "Dashboard"
+                : activeView === "products"
+                  ? editingProduct ? "Edit Product" : "Products"
+                  : activeView === "category"
+                    ? editingCategory ? "Edit Category" : "Add Category"
+                    : activeView === "testimonials"
+                      ? editingTestimonial ? "Edit Testimonial" : "Testimonials"
+                      : "Banner"}
             </h1>
-            <p>Catalog management <span aria-hidden="true">/</span> {selection?.kind === "category" ? "Categories" : "Products"}</p>
+            <p>Catalog management <span aria-hidden="true">/</span> {activeView === "category" ? "Categories" : activeView === "testimonials" ? "Testimonials" : activeView === "products" ? "Products" : activeView === "banner" ? "Banner" : "Overview"}</p>
           </div>
         </div>
         <div className="admin-header-actions">
           <form action={logoutAdmin}>
             <button className="admin-logout" type="submit">Sign out</button>
           </form>
-          {selection?.kind === "product" && (
+          {activeView === "products" && selection?.kind === "product" && (
             <button className="admin-publish-button" disabled={productPending} form="product-form" type="submit">
               {productPending ? "Saving..." : editingProduct ? "Save changes" : "Publish product"}
+            </button>
+          )}
+          {activeView === "testimonials" && selection?.kind === "testimonial" && (
+            <button className="admin-publish-button" disabled={testimonialPending} form="testimonial-form" type="submit">
+              {testimonialPending ? "Saving..." : editingTestimonial ? "Save changes" : "Add testimonial"}
             </button>
           )}
         </div>
@@ -257,127 +323,239 @@ export function AdminDashboard({
       <div className="admin-layout">
         <aside className="admin-sidebar">
           <nav className="admin-panel admin-navigation" aria-label="Admin navigation">
-            <Link className="admin-nav-action" href="/">
-              <span aria-hidden="true">⌂</span> Home
-            </Link>
             <button
-              className={`admin-nav-action ${selection?.kind === "product" ? "is-active" : ""}`}
-              onClick={() => select({ kind: "product", id: NEW_ITEM })}
+              className={`admin-nav-action ${activeView === "home" ? "is-active" : ""}`}
+              onClick={() => showView("home")}
+              type="button"
+            >
+              <span aria-hidden="true">⌂</span> Home
+            </button>
+            <button
+              className={`admin-nav-action ${activeView === "products" ? "is-active" : ""}`}
+              onClick={() => showView("products")}
               type="button"
             >
               <span aria-hidden="true">▧</span> Products
               <span className="admin-nav-count">{products.length}</span>
             </button>
             <button
-              className={`admin-nav-action ${selection?.kind === "category" ? "is-active" : ""}`}
-              onClick={() => select({ kind: "category", id: NEW_ITEM })}
+              className={`admin-nav-action ${activeView === "category" ? "is-active" : ""}`}
+              onClick={() => showView("category")}
               type="button"
             >
               <span aria-hidden="true">▦</span> Add category
               <span className="admin-nav-add" aria-hidden="true">+</span>
             </button>
+            <button
+              className={`admin-nav-action ${activeView === "testimonials" ? "is-active" : ""}`}
+              onClick={() => showView("testimonials")}
+              type="button"
+            >
+              <span aria-hidden="true">❝</span> Testimonials
+              <span className="admin-nav-count">{testimonials.length}</span>
+            </button>
+            <button
+              className={`admin-nav-action ${activeView === "banner" ? "is-active" : ""}`}
+              onClick={() => showView("banner")}
+              type="button"
+            >
+              <span aria-hidden="true">▰</span> Banner
+            </button>
           </nav>
-
-          <section className="admin-panel">
-            <div className="admin-panel-heading">
-              <h2>Products</h2>
-              <button
-                className={isNewProduct ? "is-active" : ""}
-                onClick={() => select({ kind: "product", id: NEW_ITEM })}
-                type="button"
-              >
-                + Add
-              </button>
-            </div>
-            {products.length === 0 ? (
-              <p className="admin-empty">No products yet.</p>
-            ) : (
-              <ul className="admin-nav-list">
-                {products.map((product) => (
-                  <li key={product.id}>
-                    <button
-                      className={selection?.kind === "product" && selection.id === product.id ? "is-active" : ""}
-                      onClick={() => select({ kind: "product", id: product.id })}
-                      type="button"
-                    >
-                      <span className="admin-nav-thumb" style={{ backgroundImage: `url("${product.image_url}")` }} />
-                      <span className="admin-nav-info">
-                        <strong>{product.name}</strong>
-                        <span>{categoryNameById.get(product.category_id) ?? "Uncategorized"}</span>
-                      </span>
-                    </button>
-                    <button
-                      className="admin-nav-delete"
-                      disabled={isDeleting}
-                      onClick={() => {
-                        if (window.confirm(`Delete "${product.name}"? This cannot be undone.`)) {
-                          runDelete(deleteProduct, product.id);
-                        }
-                      }}
-                      title="Delete product"
-                      type="button"
-                    >
-                      ×
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
-          <section className="admin-panel">
-            <div className="admin-panel-heading">
-              <h2>Categories</h2>
-              <button
-                className={isNewCategory ? "is-active" : ""}
-                onClick={() => select({ kind: "category", id: NEW_ITEM })}
-                type="button"
-              >
-                + Add
-              </button>
-            </div>
-            {categories.length === 0 ? (
-              <p className="admin-empty">No categories yet.</p>
-            ) : (
-              <ul className="admin-nav-list">
-                {categories.map((category) => (
-                  <li key={category.id}>
-                    <button
-                      className={selection?.kind === "category" && selection.id === category.id ? "is-active" : ""}
-                      onClick={() => select({ kind: "category", id: category.id })}
-                      type="button"
-                    >
-                      <span className="admin-nav-info">
-                        <strong>{category.parent_id ? "↳ " : ""}{category.name}</strong>
-                        <span>{category.parent_id ? "Subcategory" : "Category"}</span>
-                      </span>
-                    </button>
-                    <button
-                      className="admin-nav-delete"
-                      disabled={isDeleting}
-                      onClick={() => {
-                        if (window.confirm(`Delete "${category.name}" and its subcategories?`)) {
-                          runDelete(deleteCategory, category.id);
-                        }
-                      }}
-                      title="Delete category"
-                      type="button"
-                    >
-                      ×
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
         </aside>
 
         <div className="admin-main">
-          {!selection ? (
+          {activeView === "home" ? (
+            <AdminHomeDashboard
+              onNavigate={showView}
+              overview={overview}
+            />
+          ) : (
+            <>
+          {activeView === "products" && (
+            <section className="admin-panel">
+              <div className="admin-panel-heading">
+                <h2>Products <span className="admin-list-count">{products.length}</span></h2>
+                <button
+                  className={isNewProduct ? "is-active" : ""}
+                  onClick={() => select({ kind: "product", id: NEW_ITEM })}
+                  type="button"
+                >
+                  + Add product
+                </button>
+              </div>
+              {products.length === 0 ? (
+                <p className="admin-empty">No products yet. Add your first product below.</p>
+              ) : (
+                <ul className="admin-manage-list">
+                  {products.map((product) => (
+                    <li key={product.id}>
+                      <span className="admin-manage-thumb" style={{ backgroundImage: `url("${product.image_url}")` }} />
+                      <span className="admin-manage-info">
+                        <strong>{product.name}</strong>
+                        <span>{categoryNameById.get(product.category_id) ?? "Uncategorized"}</span>
+                      </span>
+                      <span className="admin-manage-actions">
+                        <button
+                          onClick={() => select({ kind: "product", id: product.id })}
+                          type="button"
+                        >Edit</button>
+                        <button
+                          className="admin-delete"
+                          disabled={isDeleting}
+                          onClick={() => {
+                            if (window.confirm(`Delete "${product.name}"? This cannot be undone.`)) {
+                              runDelete(deleteProduct, product.id);
+                            }
+                          }}
+                          type="button"
+                        >Delete</button>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+
+          {activeView === "category" && (
+            <section className="admin-panel">
+              <div className="admin-panel-heading">
+                <h2>Categories <span className="admin-list-count">{categories.length}</span></h2>
+                <button
+                  className={isNewCategory ? "is-active" : ""}
+                  onClick={() => select({ kind: "category", id: NEW_ITEM })}
+                  type="button"
+                >
+                  + Add category
+                </button>
+              </div>
+              {categories.length === 0 ? (
+                <p className="admin-empty">No categories yet. Add your first category below.</p>
+              ) : (
+                <ul className="admin-manage-list">
+                  {categories.map((category) => (
+                    <li key={category.id}>
+                      <span className="admin-manage-info">
+                        <strong>{category.parent_id ? `↳ ${category.name}` : category.name}</strong>
+                        <span>{category.parent_id ? "Subcategory" : "Top-level category"}</span>
+                      </span>
+                      <span className="admin-manage-actions">
+                        <button
+                          onClick={() => select({ kind: "category", id: category.id })}
+                          type="button"
+                        >Edit</button>
+                        <button
+                          className="admin-delete"
+                          disabled={isDeleting}
+                          onClick={() => {
+                            if (window.confirm(`Delete "${category.name}" and its subcategories?`)) {
+                              runDelete(deleteCategory, category.id);
+                            }
+                          }}
+                          type="button"
+                        >Delete</button>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+
+          {activeView === "testimonials" && (
+            <section className="admin-panel">
+              <div className="admin-panel-heading">
+                <h2>Testimonials <span className="admin-list-count">{testimonials.length}</span></h2>
+                <button
+                  className={isNewTestimonial ? "is-active" : ""}
+                  onClick={() => select({ kind: "testimonial", id: NEW_ITEM })}
+                  type="button"
+                >
+                  + Add testimonial
+                </button>
+              </div>
+              {testimonials.length === 0 ? (
+                <p className="admin-empty">No testimonials yet. Add one below.</p>
+              ) : (
+                <ul className="admin-manage-list">
+                  {testimonials.map((testimonial) => (
+                    <li key={testimonial.id}>
+                      <span className="admin-manage-info">
+                        <strong>{testimonial.customer_name}</strong>
+                        <span>{testimonial.content}</span>
+                      </span>
+                      <span className="admin-manage-actions">
+                        <button
+                          onClick={() => select({ kind: "testimonial", id: testimonial.id })}
+                          type="button"
+                        >Edit</button>
+                        <button
+                          className="admin-delete"
+                          disabled={isDeleting}
+                          onClick={() => {
+                            if (window.confirm(`Delete the testimonial from "${testimonial.customer_name}"?`)) {
+                              runDelete(deleteTestimonial, testimonial.id);
+                            }
+                          }}
+                          type="button"
+                        >Delete</button>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+
+          <div className="admin-editor" ref={editorRef}>
+          {activeView === "banner" ? (
+            <section className="admin-panel admin-banner-editor">
+              <div className="admin-section-heading">
+                <div>
+                  <h2>Store banner</h2>
+                  <p>Upload an image to show on the products page.</p>
+                </div>
+              </div>
+              <form
+                action={bannerAction}
+                className="admin-form"
+                id="banner-form"
+              >
+                <ImageField
+                  cloudName={cloudinaryCloudName}
+                  defaultUrl={banner?.image_url ?? ""}
+                  uploadPreset={cloudinaryUploadPreset}
+                />
+                <p className="admin-banner-status" role="status">
+                  Banner is currently {banner?.is_active ? "active" : "inactive"}.
+                </p>
+                <FormFeedback state={bannerState} />
+                <FormFeedback state={bannerToggleState} />
+                <div className="admin-form-actions">
+                  <button disabled={bannerPending} type="submit">
+                    {bannerPending ? "Saving..." : "Save banner image"}
+                  </button>
+                  <button
+                    aria-pressed={banner?.is_active ?? false}
+                    disabled={bannerTogglePending}
+                    formAction={bannerToggleAction}
+                    type="submit"
+                  >
+                    {bannerTogglePending
+                      ? "Updating..."
+                      : banner?.is_active
+                        ? "Deactivate banner"
+                        : "Activate banner"}
+                  </button>
+                </div>
+              </form>
+            </section>
+          ) : !selection ? (
             <section className="admin-panel admin-placeholder">
-              <p className="eyebrow">Catalog management</p>
-              <h2>Select an item to edit.</h2>
-              <p className="admin-panel-hint">Choose a product or category from the left panel, or add a new item.</p>
+              <p className="eyebrow">{activeView === "products" ? "Product management" : activeView === "category" ? "Category management" : "Testimonial management"}</p>
+              <h2>Select an item or add a new one.</h2>
+              <p className="admin-panel-hint">Choose an item from the list above or use the add button.</p>
             </section>
           ) : selection.kind === "product" ? (
             <form
@@ -438,6 +616,7 @@ export function AdminDashboard({
                       maxLength={160}
                       name="name"
                       placeholder="e.g. Bosch Series 6 Washing Machine"
+                      ref={editorFieldRef}
                       required
                     />
                   </label>
@@ -479,23 +658,23 @@ export function AdminDashboard({
 
                   <div className="admin-field-grid">
                     <label>
-                      Retail price (INR)
+                      Bosch price (INR)
                       <input
-                        defaultValue={editingProduct?.amazon_price ?? ""}
+                        defaultValue={editingProduct?.bosch_price ?? ""}
                         min="0"
-                        name="amazonPrice"
-                        placeholder="e.g. 74990"
+                        name="boschPrice"
+                        placeholder="e.g. 54990"
                         step="0.01"
                         type="number"
                       />
                     </label>
                     <label>
-                      Our price (INR)
+                      Amazon price (INR)
                       <input
-                        defaultValue={editingProduct?.bosch_price ?? ""}
+                        defaultValue={editingProduct?.amazon_price ?? ""}
                         min="0"
-                        name="boschPrice"
-                        placeholder="e.g. 67990"
+                        name="amazonPrice"
+                        placeholder="e.g. 49990"
                         step="0.01"
                         type="number"
                       />
@@ -521,7 +700,7 @@ export function AdminDashboard({
                 </section>
               </div>
             </form>
-          ) : (
+          ) : selection.kind === "category" ? (
             <section className="admin-panel admin-category-editor">
               <div className="admin-section-heading">
                 <div>
@@ -538,7 +717,13 @@ export function AdminDashboard({
                 />
                 <label>
                   Name <span aria-hidden="true">*</span>
-                  <input defaultValue={editingCategory?.name ?? ""} maxLength={120} name="name" required />
+                  <input
+                    defaultValue={editingCategory?.name ?? ""}
+                    maxLength={120}
+                    name="name"
+                    ref={editorFieldRef}
+                    required
+                  />
                 </label>
                 <label>
                   Parent category <span>(leave empty for a top-level category)</span>
@@ -566,8 +751,169 @@ export function AdminDashboard({
                 </div>
               </form>
             </section>
+          ) : (
+            <section className="admin-panel admin-category-editor">
+              <div className="admin-section-heading">
+                <div>
+                  <h2>{editingTestimonial ? "Testimonial details" : "Add a testimonial"}</h2>
+                  <p>Customer stories are displayed on the homepage as soon as they are saved.</p>
+                </div>
+              </div>
+              <form
+                id="testimonial-form"
+                key={`${selectionKey}-${formKey}`}
+                action={testimonialAction}
+                className="admin-form"
+              >
+                {editingTestimonial && <input name="id" type="hidden" value={editingTestimonial.id} />}
+                <label>
+                  Customer name <span aria-hidden="true">*</span>
+                  <input
+                    defaultValue={editingTestimonial?.customer_name ?? ""}
+                    maxLength={120}
+                    name="customerName"
+                    placeholder="e.g. Alex Morgan"
+                    ref={editorFieldRef}
+                    required
+                  />
+                </label>
+                <label>
+                  Customer title <span>(optional)</span>
+                  <input
+                    defaultValue={editingTestimonial?.customer_title ?? ""}
+                    maxLength={120}
+                    name="customerTitle"
+                    placeholder="e.g. Homeowner in Mumbai"
+                  />
+                </label>
+                <label>
+                  Testimonial <span aria-hidden="true">*</span>
+                  <textarea
+                    defaultValue={editingTestimonial?.content ?? ""}
+                    maxLength={2000}
+                    name="content"
+                    placeholder="Share what the customer said about their experience."
+                    required
+                    rows={6}
+                  />
+                </label>
+                <FormFeedback state={testimonialState} />
+                <div className="admin-form-actions">
+                  <button disabled={testimonialPending} type="submit">
+                    {testimonialPending ? "Saving..." : editingTestimonial ? "Update testimonial" : "Add testimonial"}
+                  </button>
+                </div>
+              </form>
+            </section>
+          )}
+          </div>
+            </>
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function AdminHomeDashboard({
+  overview,
+  onNavigate,
+}: {
+  overview: AdminOverview;
+  onNavigate: (view: AdminView) => void;
+}) {
+  const metrics = [
+    { label: "Price enquiries", value: overview.enquiryCount, detail: "Customer requests received" },
+    { label: "Products", value: overview.productCount, detail: "Published in your catalog" },
+    { label: "Categories", value: overview.categoryCount, detail: "Including subcategories" },
+    { label: "Testimonials", value: overview.testimonialCount, detail: "Shown on the homepage" },
+  ];
+
+  return (
+    <div className="admin-dashboard">
+      <section className="admin-dashboard-welcome">
+        <div>
+          <p className="eyebrow">Store overview</p>
+          <h2>Welcome back.</h2>
+          <p>Here&apos;s how your product catalog and customer enquiries are doing.</p>
+        </div>
+        <button className="admin-publish-button" onClick={() => onNavigate("products")} type="button">
+          + Add product
+        </button>
+      </section>
+
+      <section aria-label="Store totals" className="admin-metric-grid">
+        {metrics.map((metric, index) => (
+          <article className="admin-metric-card" key={metric.label}>
+            <span className="admin-metric-icon" aria-hidden="true">
+              {["↗", "▧", "▦", "❝"][index]}
+            </span>
+            <p>{metric.label}</p>
+            <strong>{metric.value.toLocaleString("en-IN")}</strong>
+            <span>{metric.detail}</span>
+          </article>
+        ))}
+      </section>
+
+      <div className="admin-dashboard-grid">
+        <section className="admin-panel admin-dashboard-panel">
+          <div className="admin-panel-heading">
+            <div>
+              <h2>Products by category</h2>
+              <p>See how your active products are distributed.</p>
+            </div>
+            <button onClick={() => onNavigate("category")} type="button">Manage categories</button>
+          </div>
+          {overview.productsByCategory.length === 0 ? (
+            <p className="admin-empty">No categories to show yet.</p>
+          ) : (
+            <ul className="admin-category-stats">
+              {overview.productsByCategory.map((category) => (
+                <li key={category.id}>
+                  <span>
+                    <strong>{category.name}</strong>
+                    {category.parent_name && <small>{category.parent_name}</small>}
+                  </span>
+                  <b>{category.product_count.toLocaleString("en-IN")}</b>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className="admin-panel admin-dashboard-panel">
+          <div className="admin-panel-heading">
+            <div>
+              <h2>Recent price enquiries</h2>
+              <p>{overview.enquiryCount.toLocaleString("en-IN")} total customer requests</p>
+            </div>
+          </div>
+          {overview.recentEnquiries.length === 0 ? (
+            <p className="admin-empty">No price enquiries received yet.</p>
+          ) : (
+            <ul className="admin-enquiry-list">
+              {overview.recentEnquiries.map((enquiry) => (
+                <li key={enquiry.id}>
+                  <div className="admin-enquiry-heading">
+                    <strong>{enquiry.full_name}</strong>
+                    <time dateTime={enquiry.created_at}>
+                      {new Intl.DateTimeFormat("en-IN", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                        timeZone: "Asia/Kolkata",
+                      }).format(new Date(enquiry.created_at))}
+                    </time>
+                  </div>
+                  <span className="admin-enquiry-product">{enquiry.product_name}</span>
+                  <div className="admin-enquiry-contact">
+                    <a href={`tel:${enquiry.phone}`}>{enquiry.phone}</a>
+                    <a href={`mailto:${enquiry.email}`}>{enquiry.email}</a>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
     </div>
   );

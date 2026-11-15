@@ -1,9 +1,11 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getCatalogData } from "@/lib/catalog";
+import { getCatalogData, getSiteBanner } from "@/lib/catalog";
+import { BrandLogo } from "../BrandLogo";
 import { CatalogBrowser } from "./CatalogBrowser";
 import { ProductsHeader } from "./ProductsHeader";
+import { SiteBanner } from "../SiteBanner";
 import "./products.css";
 
 export const metadata: Metadata = {
@@ -44,7 +46,10 @@ export default function ProductsPage() {
 }
 
 async function ProductsContent() {
-  const { categories, products } = await getCatalogData();
+  const [{ categories, products }, banner] = await Promise.all([
+    getCatalogData(),
+    getSiteBanner(),
+  ]);
 
   return (
     <main className="products-page">
@@ -54,6 +59,8 @@ async function ProductsContent() {
       </div>
 
       <ProductsHeader />
+
+      <SiteBanner banner={banner} />
 
       <div className="products-breadcrumb">
         <Link href="/">Home</Link>
@@ -107,9 +114,8 @@ async function ProductsContent() {
       </section>
 
       <footer className="site-footer">
-        <Link className="brand footer-brand" href="/" aria-label="Appliance Studio home">
-          <span className="brand-mark" aria-hidden="true">A</span>
-          <span className="brand-name"><strong>APPLIANCE</strong><small>STUDIO</small></span>
+        <Link className="brand footer-brand" href="/" aria-label="Beingstones home">
+          <BrandLogo />
         </Link>
         <p>Better appliances. Personal service.</p>
         <span>Independent retailer; not affiliated with Bosch.</span>

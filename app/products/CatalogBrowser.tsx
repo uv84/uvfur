@@ -134,19 +134,19 @@ export function CatalogBrowser({
                     View product details <span aria-hidden="true">↗</span>
                   </Link>
                   <div className="catalog-product-prices">
-                    {product.amazon_price !== null && (
+                    {product.bosch_price !== null && (
                       <span>
-                        Retail{" "}
+                        Bosch{" "}
                         <strong>
-                          {formatPrice(product.amazon_price)}
+                          {formatPrice(product.bosch_price)}
                         </strong>
                       </span>
                     )}
-                    {product.bosch_price !== null && (
+                    {product.amazon_price !== null && (
                       <span>
-                        Our price{" "}
+                        Amazon{" "}
                         <strong>
-                          {formatPrice(product.bosch_price)}
+                          {formatPrice(product.amazon_price)}
                         </strong>
                       </span>
                     )}

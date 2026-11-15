@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { getCatalogData } from "@/lib/catalog";
+import { getCatalogData, getTestimonials } from "@/lib/catalog";
+import { BrandLogo } from "./BrandLogo";
+import { HeroCarousel } from "./HeroCarousel";
 
 const benefits = [
   {
@@ -29,16 +31,12 @@ export default function Home() {
       </div>
 
       <header className="site-header">
-        <Link className="brand" href="/" aria-label="Appliance Studio home">
-          <span className="brand-mark" aria-hidden="true">A</span>
-          <span className="brand-name">
-            <strong>APPLIANCE</strong>
-            <small>STUDIO</small>
-          </span>
+        <Link className="brand" href="/" aria-label="Beingstones home">
+          <BrandLogo priority />
         </Link>
 
         <nav className="main-nav" aria-label="Main navigation">
-          <a href="/products">Products</a>
+          <Link href="/products">Products</Link>
           <a href="#difference">Why us</a>
           <a href="#inspiration">Our promise</a>
           <a href="/contact-us">Contact</a>
@@ -50,7 +48,7 @@ export default function Home() {
           <details className="mobile-menu">
             <summary aria-label="Open navigation menu"><span></span><span></span></summary>
             <nav aria-label="Mobile navigation">
-              <a href="/products">Products</a>
+              <Link href="/products">Products</Link>
               <a href="#difference">Why us</a>
               <a href="#inspiration">Our promise</a>
               <a href="/contact-us">Contact</a>
@@ -60,7 +58,7 @@ export default function Home() {
       </header>
 
       <section className="hero">
-        <div className="hero-photo" aria-hidden="true"></div>
+        <HeroCarousel />
         <div className="hero-shade" aria-hidden="true"></div>
         <div className="hero-content">
           <p className="eyebrow hero-eyebrow"><span></span> Thoughtful technology for your home</p>
@@ -103,6 +101,10 @@ export default function Home() {
         <HomeCatalogSection />
       </Suspense>
 
+      <Suspense fallback={<section className="testimonials-section"><p>Loading testimonials...</p></section>}>
+        <HomeTestimonialsSection />
+      </Suspense>
+
       <section className="story-section" id="inspiration">
         <div className="story-image" role="img" aria-label="Warm, modern kitchen with home appliances"></div>
         <div className="story-copy">
@@ -121,13 +123,12 @@ export default function Home() {
           <p className="eyebrow">Looking for a better price?</p>
           <h2>Let&apos;s find the right fit<br /><em>for your home.</em></h2>
         </div>
-        <a className="button button-light" href="/products">Browse appliances <span aria-hidden="true">↗</span></a>
+        <Link className="button button-light" href="/products">Browse appliances <span aria-hidden="true">↗</span></Link>
       </section>
 
       <footer className="site-footer">
-        <Link className="brand footer-brand" href="/" aria-label="Appliance Studio home">
-          <span className="brand-mark" aria-hidden="true">A</span>
-          <span className="brand-name"><strong>APPLIANCE</strong><small>STUDIO</small></span>
+        <Link className="brand footer-brand" href="/" aria-label="Beingstones home">
+          <BrandLogo />
         </Link>
         <p>Better appliances. Personal service.</p>
         <span>Independent retailer; not affiliated with Bosch.</span>
@@ -147,11 +148,11 @@ async function HomeCatalogSection() {
           <p className="eyebrow">Thoughtfully made, ready for your home</p>
           <h2>Appliances for<br /><em>everyday living.</em></h2>
         </div>
-        <a className="text-link" href="/products">View all products <span aria-hidden="true">↗</span></a>
+        <Link className="text-link" href="/products">View all products <span aria-hidden="true">↗</span></Link>
       </div>
       <div className="product-grid">
         {products.map((product, index) => (
-          <a
+          <Link
             className="product-card"
             href={`/products#${product.id}`}
             key={product.name}
@@ -169,7 +170,37 @@ async function HomeCatalogSection() {
               <div><h3>{product.name}</h3><p>{product.description}</p></div>
               <span aria-hidden="true">↗</span>
             </div>
-          </a>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+async function HomeTestimonialsSection() {
+  const testimonials = await getTestimonials();
+
+  if (testimonials.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="testimonials-section" id="testimonials">
+      <div className="testimonials-heading">
+        <p className="eyebrow">Good words from our customers</p>
+        <h2>Made better by <em>you.</em></h2>
+        <p>Hear from people who found the right fit for their home with our team.</p>
+      </div>
+      <div className="testimonial-grid">
+        {testimonials.map((testimonial) => (
+          <article className="testimonial-card" key={testimonial.id}>
+            <span className="testimonial-quote-mark" aria-hidden="true">“</span>
+            <blockquote>{testimonial.content}</blockquote>
+            <div className="testimonial-author">
+              <strong>{testimonial.customer_name}</strong>
+              {testimonial.customer_title && <span>{testimonial.customer_title}</span>}
+            </div>
+          </article>
         ))}
       </div>
     </section>

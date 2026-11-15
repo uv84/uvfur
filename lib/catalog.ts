@@ -26,6 +26,39 @@ export type Product = {
   image_url: string;
 };
 
+export type Testimonial = {
+  id: string;
+  customer_name: string;
+  customer_title: string;
+  content: string;
+};
+
+export type SiteBanner = {
+  image_url: string;
+  is_active: boolean;
+};
+
+export type AdminOverview = {
+  enquiryCount: number;
+  productCount: number;
+  categoryCount: number;
+  testimonialCount: number;
+  productsByCategory: {
+    id: string;
+    name: string;
+    parent_name: string | null;
+    product_count: number;
+  }[];
+  recentEnquiries: {
+    id: string;
+    product_name: string;
+    full_name: string;
+    phone: string;
+    email: string;
+    created_at: string;
+  }[];
+};
+
 export class CatalogUnavailableError extends Error {
   constructor(
     public readonly reason: "configuration" | "network" | "schema",
@@ -134,6 +167,111 @@ export async function getCatalogData() {
   }));
 
   return { categories, products };
+}
+
+export async function getTestimonials(): Promise<Testimonial[]> {
+  await connection();
+  const sql = getDatabase();
+  const rows = await runCatalogQuery(() => sql`
+    SELECT id::text, customer_name, customer_title, content
+    FROM testimonials
+    ORDER BY created_at DESC
+  `);
+
+  return rows.map((row) => ({
+    id: String(row.id),
+    customer_name: String(row.customer_name),
+    customer_title: String(row.customer_title),
+    content: String(row.content),
+  }));
+}
+
+export async function getSiteBanner(): Promise<SiteBanner | null> {
+  await connection();
+  const sql = getDatabase();
+  const rows = await runCatalogQuery(() => sql`
+    SELECT image_url, is_active
+    FROM site_banner
+    WHERE id = 1
+    LIMIT 1
+  `);
+  const row = rows[0];
+
+  if (!row) {
+    return null;
+  }
+
+  return {
+    image_url: String(row.image_url),
+    is_active: Boolean(row.is_active),
+  };
+}
+
+export async function getAdminOverview(): Promise<AdminOverview> {
+  await connection();
+  const sql = getDatabase();
+  const [statRows, categoryRows, enquiryRows] = await Promise.all([
+    runCatalogQuery(() => sql`
+      SELECT
+        (SELECT COUNT(*) FROM price_requests)::text AS enquiry_count,
+        (SELECT COUNT(*) FROM products WHERE is_active = true)::text AS product_count,
+        (SELECT COUNT(*) FROM categories)::text AS category_count,
+        (SELECT COUNT(*) FROM testimonials)::text AS testimonial_count
+    `),
+    runCatalogQuery(() => sql`
+      SELECT
+        category.id::text,
+        category.name,
+        parent.name AS parent_name,
+        COUNT(product.id)::text AS product_count
+      FROM categories AS category
+      LEFT JOIN categories AS parent ON parent.id = category.parent_id
+      LEFT JOIN products AS product
+        ON product.category_id = category.id AND product.is_active = true
+      GROUP BY
+        category.id,
+        category.name,
+        category.parent_id,
+        parent.name,
+        parent.sort_order,
+        category.sort_order
+      ORDER BY COALESCE(parent.sort_order, category.sort_order), category.sort_order, category.name
+    `),
+    runCatalogQuery(() => sql`
+      SELECT
+        id::text,
+        product_name,
+        full_name,
+        phone,
+        email,
+        created_at::text
+      FROM price_requests
+      ORDER BY created_at DESC
+      LIMIT 8
+    `),
+  ]);
+  const stats = statRows[0];
+
+  return {
+    enquiryCount: Number(stats.enquiry_count),
+    productCount: Number(stats.product_count),
+    categoryCount: Number(stats.category_count),
+    testimonialCount: Number(stats.testimonial_count),
+    productsByCategory: categoryRows.map((row) => ({
+      id: String(row.id),
+      name: String(row.name),
+      parent_name: row.parent_name === null ? null : String(row.parent_name),
+      product_count: Number(row.product_count),
+    })),
+    recentEnquiries: enquiryRows.map((row) => ({
+      id: String(row.id),
+      product_name: String(row.product_name),
+      full_name: String(row.full_name),
+      phone: String(row.phone),
+      email: String(row.email),
+      created_at: String(row.created_at),
+    })),
+  };
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {

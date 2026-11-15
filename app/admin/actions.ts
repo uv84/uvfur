@@ -99,7 +99,10 @@ function friendlyDbError(error: unknown): ActionResult {
       };
     }
     if (error.code === "42P01") {
-      return { error: "Catalog tables are missing. Run db/schema.sql in Neon first." };
+      return {
+        error:
+          "A required database table is missing. Run db/schema.sql for a new database or the relevant file in db/migrations for an existing one.",
+      };
     }
   }
 
@@ -252,8 +255,8 @@ export async function saveProduct(
   const description = formText(formData, "description");
   const image = parseImageUrl(formData);
   const categoryId = formText(formData, "categoryId");
-  const amazonPrice = optionalPrice(formText(formData, "amazonPrice"), "Retail price");
-  const boschPrice = optionalPrice(formText(formData, "boschPrice"), "Our price");
+  const amazonPrice = optionalPrice(formText(formData, "amazonPrice"), "Amazon price");
+  const boschPrice = optionalPrice(formText(formData, "boschPrice"), "Bosch price");
 
   if ("error" in image) {
     return { error: image.error };
@@ -347,4 +350,143 @@ export async function deleteProduct(productId: string): Promise<ActionResult> {
   revalidatePath("/products");
   revalidatePath("/admin");
   return { message: "Product deleted." };
+}
+
+export async function saveTestimonial(
+  _previousState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  await requireAdmin();
+
+  const id = formText(formData, "id");
+  const customerName = formText(formData, "customerName");
+  const customerTitle = formText(formData, "customerTitle");
+  const content = formText(formData, "content");
+
+  if (!customerName || customerName.length > 120) {
+    return { error: "Customer names must be between 1 and 120 characters." };
+  }
+
+  if (customerTitle.length > 120) {
+    return { error: "Customer titles must be 120 characters or fewer." };
+  }
+
+  if (!content || content.length > 2000) {
+    return { error: "Testimonials must be between 1 and 2,000 characters." };
+  }
+
+  if (id && !UUID_PATTERN.test(id)) {
+    return { error: "Invalid testimonial." };
+  }
+
+  const sql = getDatabase();
+
+  try {
+    if (id) {
+      await sql`
+        UPDATE testimonials
+        SET customer_name = ${customerName},
+            customer_title = ${customerTitle},
+            content = ${content}
+        WHERE id = ${id}::uuid
+      `;
+    } else {
+      await sql`
+        INSERT INTO testimonials (customer_name, customer_title, content)
+        VALUES (${customerName}, ${customerTitle}, ${content})
+      `;
+    }
+  } catch (error) {
+    return friendlyDbError(error);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+  return { message: id ? "Testimonial updated." : "Testimonial added." };
+}
+
+export async function deleteTestimonial(testimonialId: string): Promise<ActionResult> {
+  await requireAdmin();
+
+  if (!UUID_PATTERN.test(testimonialId)) {
+    return { error: "Invalid testimonial." };
+  }
+
+  const sql = getDatabase();
+
+  try {
+    await sql`DELETE FROM testimonials WHERE id = ${testimonialId}::uuid`;
+  } catch (error) {
+    return friendlyDbError(error);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+  return { message: "Testimonial deleted." };
+}
+
+export async function saveBanner(
+  _previousState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  await requireAdmin();
+
+  const image = parseImageUrl(formData);
+  if ("error" in image) {
+    return { error: image.error };
+  }
+
+  const sql = getDatabase();
+
+  try {
+    await sql`
+      INSERT INTO site_banner (id, image_url, is_active)
+      VALUES (1, ${image.url}, false)
+      ON CONFLICT (id) DO UPDATE
+      SET image_url = EXCLUDED.image_url,
+          updated_at = now()
+    `;
+  } catch (error) {
+    return friendlyDbError(error);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/products");
+  revalidatePath("/admin");
+  return { message: "Banner image saved." };
+}
+
+export async function toggleBanner(
+  _previousState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  await requireAdmin();
+
+  const image = parseImageUrl(formData);
+  if ("error" in image) {
+    return { error: image.error };
+  }
+
+  const sql = getDatabase();
+
+  try {
+    const rows = await sql`
+      INSERT INTO site_banner (id, image_url, is_active)
+      VALUES (1, ${image.url}, true)
+      ON CONFLICT (id) DO UPDATE
+      SET image_url = EXCLUDED.image_url,
+          is_active = NOT site_banner.is_active,
+          updated_at = now()
+      RETURNING is_active
+    `;
+
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath("/admin");
+    return {
+      message: rows[0].is_active ? "Banner activated." : "Banner deactivated.",
+    };
+  } catch (error) {
+    return friendlyDbError(error);
+  }
 }

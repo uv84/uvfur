@@ -447,11 +447,6 @@
   color: var(--paper);
 }
 
-.contact-page .footer-brand .brand-mark {
-  border-color: #8abaff;
-  color: #8abaff;
-}
-
 .contact-page .site-footer > p,
 .contact-page .site-footer > a:last-child {
   margin: 0;
